@@ -1,0 +1,23 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Fundraiser {
+  id             String   @id @default(cuid())
+  title          String
+  slug           String   @unique
+  story          String
+  goal           Float
+  currentImpact  Float    @default(0)
+
+  creatorName    String
+  creatorEmail   String
+
+  createdAt      DateTime @default(now())
+}

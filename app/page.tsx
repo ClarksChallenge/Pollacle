@@ -1,30 +1,24 @@
-import Image from "next/image";
+import Navbar from "../components/Navbar";
+import Hero from "../components/Hero";
+import TrustedBy from "../components/TrustedBy";
+import HowItWorks from "../components/HowItWorks";
+import WhyPollacle from "../components/WhyPollacle";
+import Footer from "../components/Footer";
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-white flex flex-col items-center justify-center p-10">
+    <main className="min-h-screen bg-gradient-to-b from-white via-purple-50 to-white">
+      <Navbar />
 
-      <h1 className="text-6xl font-bold text-purple-700">
-        Pollacle
-      </h1>
+      <Hero />
 
-      <p className="mt-4 text-xl text-gray-600 text-center max-w-xl">
-        Turn opinions into real-world impact through surveys that support creators and communities.
-      </p>
+      <TrustedBy />
 
-      <button className="mt-8 bg-purple-700 text-white px-6 py-3 rounded-xl">
-        Start Making Impact
-      </button>
+      <HowItWorks />
 
-      <div className="mt-10">
-        <Image
-          src="/octo.png"
-          alt="Pollacle Mascot"
-          width={400}
-          height={400}
-        />
-      </div>
+      <WhyPollacle />
 
+      <Footer />
     </main>
   );
 }
