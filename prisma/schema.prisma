@@ -1,6 +1,5 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../app/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -9,15 +8,24 @@ datasource db {
 }
 
 model Fundraiser {
-  id             String   @id @default(cuid())
-  title          String
-  slug           String   @unique
-  story          String
-  goal           Float
-  currentImpact  Float    @default(0)
+  id                String   @id @default(cuid())
 
-  creatorName    String
-  creatorEmail   String
+  slug              String   @unique
 
-  createdAt      DateTime @default(now())
+  title             String
+  story             String
+  category          String
+
+  goalAmount        Float
+  amountRaised      Float    @default(0)
+
+  surveySupporters  Int      @default(0)
+  cashDonations     Int      @default(0)
+
+  coverImage        String?
+
+  status            String   @default("ACTIVE")
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 }

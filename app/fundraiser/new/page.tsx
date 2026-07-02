@@ -1,55 +1,112 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+
+function slugify(text: string) {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
+}
 
 export default function NewFundraiserPage() {
+  const router = useRouter();
+
   const [title, setTitle] = useState("");
-  const [causeType, setCauseType] = useState("self");
+  const [story, setStory] = useState("");
+  const [category, setCategory] = useState("general");
+  const [goalAmount, setGoalAmount] = useState(1000);
 
-  const handleCreate = async () => {
-    const res = await fetch("/api/fundraiser", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        title,
-        causeType,
-        userId: "demo-user",
-      }),
-    });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-    const data = await res.json();
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
 
-    alert("Fundraiser created! ID: " + data.id);
-  };
+    const slug = slugify(title);
+
+    try {
+      const res = await fetch("/api/fundraiser", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title,
+          story,
+          category,
+          goalAmount,
+          slug,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to create fundraiser");
+      }
+
+      const data = await res.json();
+
+      // redirect to future public page
+      router.push(`/f/${data.slug}`);
+    } catch (err: any) {
+      setError(err.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
-    <main style={{ padding: 40 }}>
-      <h1>Create Fundraiser</h1>
+    <div className="max-w-xl mx-auto p-6">
+      <h1 className="text-2xl font-bold mb-6">Create Fundraiser</h1>
 
-      <input
-        placeholder="Title"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        style={{ display: "block", marginTop: 10, padding: 10 }}
-      />
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <input
+          className="w-full border p-2"
+          placeholder="Title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          required
+        />
 
-      <select
-        value={causeType}
-        onChange={(e) => setCauseType(e.target.value)}
-        style={{ display: "block", marginTop: 10, padding: 10 }}
-      >
-        <option value="self">Myself</option>
-        <option value="school">School</option>
-        <option value="club">Club</option>
-        <option value="nonprofit">Nonprofit</option>
-        <option value="other">Other</option>
-      </select>
+        <textarea
+          className="w-full border p-2"
+          placeholder="Story"
+          value={story}
+          onChange={(e) => setStory(e.target.value)}
+          rows={5}
+          required
+        />
 
-      <button onClick={handleCreate} style={{ marginTop: 20, padding: 10 }}>
-        Create
-      </button>
-    </main>
+        <input
+          className="w-full border p-2"
+          placeholder="Category"
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+        />
+
+        <input
+          className="w-full border p-2"
+          type="number"
+          placeholder="Goal Amount"
+          value={goalAmount}
+          onChange={(e) => setGoalAmount(Number(e.target.value))}
+        />
+
+        <button
+          type="submit"
+          className="bg-black text-white px-4 py-2 rounded w-full"
+          disabled={loading}
+        >
+          {loading ? "Creating..." : "Create Fundraiser"}
+        </button>
+
+        {error && <p className="text-red-500">{error}</p>}
+      </form>
+    </div>
   );
 }
