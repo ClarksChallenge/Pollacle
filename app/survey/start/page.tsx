@@ -1,7 +1,7 @@
 import { Suspense } from "react";
-import SurveyContent from "./components/SurveyContent";
+import StartSurveyContent from "./components/StartSurveyContent";
 
-export default function SurveyPage() {
+export default function StartSurveyPage() {
   return (
     <Suspense
       fallback={
@@ -12,7 +12,7 @@ export default function SurveyPage() {
         </main>
       }
     >
-      <SurveyContent />
+      <StartSurveyContent />
     </Suspense>
   );
 }

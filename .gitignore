@@ -17,6 +17,17 @@
 /.next/
 /out/
 
+# Prisma
+prisma/*.db
+prisma/*.db-journal
+prisma/node_modules/
+
+# Local backups
+pollacle-old/
+pollacle-old-backup/
+
+# Generated files
+.next
 # production
 /build
 

@@ -7,25 +7,64 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
 model Fundraiser {
+
   id                String   @id @default(cuid())
 
   slug              String   @unique
 
   title             String
+
   story             String
+
   category          String
 
+
   goalAmount        Float
+
   amountRaised      Float    @default(0)
 
+
   surveySupporters  Int      @default(0)
+
   cashDonations     Int      @default(0)
+
 
   coverImage        String?
 
+
   status            String   @default("ACTIVE")
 
+
+  surveyCompletions SurveyCompletion[]
+
+
   createdAt         DateTime @default(now())
+
   updatedAt         DateTime @updatedAt
+
+}
+
+
+
+model SurveyCompletion {
+
+  id             String   @id @default(cuid())
+
+
+  fundraiserId   String
+
+
+  provider       String   @default("Pollacle Test Survey")
+
+
+  rewardAmount   Float
+
+
+  completedAt    DateTime @default(now())
+
+
+  fundraiser     Fundraiser @relation(fields: [fundraiserId], references: [id])
+
 }
