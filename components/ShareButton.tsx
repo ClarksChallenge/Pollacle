@@ -3,17 +3,17 @@
 import { useState } from "react";
 
 export default function ShareButton({
+  url,
   title,
 }: {
-  title: string;
+  url: string;
+  title?: string;
 }) {
 
   const [copied, setCopied] = useState(false);
 
 
   async function share() {
-
-    const url = window.location.href;
 
 
     if (navigator.share) {
@@ -22,17 +22,19 @@ export default function ShareButton({
 
         await navigator.share({
 
-          title: title,
+          title: title || "Pollacle Fundraiser",
 
-          text: `Help support ${title} on Pollacle`,
+          text: `Support ${title || "this fundraiser"} on Pollacle`,
 
-          url: url,
+          url,
 
         });
+
 
       } catch {
 
       }
+
 
       return;
 
@@ -42,7 +44,9 @@ export default function ShareButton({
 
     await navigator.clipboard.writeText(url);
 
+
     setCopied(true);
+
 
 
     setTimeout(() => {
@@ -50,6 +54,7 @@ export default function ShareButton({
       setCopied(false);
 
     }, 2000);
+
 
   }
 
@@ -61,13 +66,13 @@ export default function ShareButton({
 
       onClick={share}
 
-      className="border border-purple-600 text-purple-700 hover:bg-purple-50 px-6 py-3 rounded-xl font-semibold transition"
+      className="bg-purple-600 hover:bg-purple-700 text-white px-5 py-3 rounded-xl font-bold"
 
     >
 
       {copied
-        ? "✓ Link Copied!"
-        : "🔗 Share Fundraiser"}
+        ? "✓ Copied!"
+        : "🔗 Share"}
 
     </button>
 

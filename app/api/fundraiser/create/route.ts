@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+
 import { prisma } from "@/app/lib/prisma";
+import { authOptions } from "@/app/lib/auth";
 
 function createSlug(title: string) {
   return title
@@ -12,6 +15,38 @@ function createSlug(title: string) {
 
 export async function POST(request: Request) {
   try {
+    // Require login
+    const session = await getServerSession(authOptions);
+
+    if (!session?.user?.email) {
+      return NextResponse.json(
+        {
+          error: "Please sign in first.",
+        },
+        {
+          status: 401,
+        }
+      );
+    }
+
+    // Find the logged-in user
+    const user = await prisma.user.findUnique({
+      where: {
+        email: session.user.email,
+      },
+    });
+
+    if (!user) {
+      return NextResponse.json(
+        {
+          error: "User not found.",
+        },
+        {
+          status: 404,
+        }
+      );
+    }
+
     const body = await request.json();
 
     const {
@@ -39,7 +74,6 @@ export async function POST(request: Request) {
 
     let slug = createSlug(title);
 
-    // Make sure the slug is unique
     let counter = 1;
 
     while (
@@ -55,10 +89,13 @@ export async function POST(request: Request) {
 
     const fundraiser = await prisma.fundraiser.create({
       data: {
+        userId: user.id,
+
         slug,
         title,
         story,
         category,
+
         goalAmount: Number(goalAmount),
 
         amountRaised: 0,

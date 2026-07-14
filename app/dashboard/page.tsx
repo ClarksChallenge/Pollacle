@@ -1,83 +1,83 @@
-"use client";
-
-import { useEffect, useState } from "react";
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
 import Link from "next/link";
 
-type Fundraiser = {
-  id: string;
-  slug: string;
-  title: string;
-  story: string;
-  category: string;
-  goalAmount: number;
-  amountRaised: number;
-  surveySupporters: number;
-  status: string;
-};
+import { authOptions } from "@/app/lib/auth";
+import { prisma } from "@/app/lib/prisma";
 
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
 
-  const [fundraisers, setFundraisers] = useState<Fundraiser[]>([]);
-  const [copied, setCopied] = useState<string | null>(null);
+
+  const session = await getServerSession(authOptions);
+
+
+  if (!session?.user?.email) {
+    redirect("/login");
+  }
 
 
 
-  useEffect(() => {
+  const user = await prisma.user.findUnique({
 
-    async function loadFundraisers() {
+    where: {
+      email: session.user.email,
+    },
 
-      const res = await fetch("/api/fundraiser");
+    include: {
 
-      const data = await res.json();
+      fundraisers: {
 
-      setFundraisers(data);
+        orderBy: {
+          createdAt: "desc",
+        },
 
-    }
+      },
 
+    },
 
-    loadFundraisers();
-
-  }, []);
-
-
-
-
-
-  async function copyLink(slug:string) {
-
-    const url =
-      `${window.location.origin}/f/${slug}`;
+  });
 
 
-    await navigator.clipboard.writeText(url);
 
-
-    setCopied(slug);
-
-
-    setTimeout(()=>{
-
-      setCopied(null);
-
-    },2000);
-
+  if (!user) {
+    redirect("/login");
   }
 
 
 
 
+  const totalRaised = user.fundraisers.reduce(
 
+    (sum, fundraiser) =>
+      sum + fundraiser.amountRaised,
 
-  const totalRaised = fundraisers.reduce(
-    (sum,f)=>sum + f.amountRaised,
     0
+
   );
 
 
-  const totalSupporters = fundraisers.reduce(
-    (sum,f)=>sum + f.surveySupporters,
+
+
+  const totalSupporters = user.fundraisers.reduce(
+
+    (sum, fundraiser) =>
+      sum + fundraiser.surveySupporters,
+
     0
+
+  );
+
+
+
+
+  const totalViews = user.fundraisers.reduce(
+
+    (sum, fundraiser) =>
+      sum + fundraiser.views,
+
+    0
+
   );
 
 
@@ -86,22 +86,29 @@ export default function DashboardPage() {
 
   return (
 
-    <main className="min-h-screen bg-gray-50">
+    <main className="min-h-screen bg-gray-100">
 
 
-      {/* Header */}
-
-      <header className="bg-white border-b">
-
-        <div className="max-w-7xl mx-auto px-8 py-5 flex justify-between items-center">
+      <div className="max-w-7xl mx-auto px-6 py-12">
 
 
-          <Link
-            href="/"
-            className="text-2xl font-bold text-purple-700"
-          >
-            🐙 Pollacle
-          </Link>
+
+        <div className="flex items-center justify-between mb-10">
+
+
+          <div>
+
+            <h1 className="text-4xl font-bold text-purple-700">
+              Creator Dashboard
+            </h1>
+
+
+            <p className="text-gray-600 mt-2">
+              Welcome back, {user.name || "Creator"} 👋
+            </p>
+
+
+          </div>
 
 
 
@@ -109,87 +116,95 @@ export default function DashboardPage() {
 
             href="/create"
 
-            className="bg-purple-700 text-white px-5 py-3 rounded-xl font-semibold"
+            className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl font-bold"
 
           >
-            + Create Fundraiser
+
+          <Link
+
+          href="/dashboard/analytics"
+
+          className="bg-blue-100 hover:bg-blue-200 text-blue-700 px-6 py-3 rounded-xl font-bold"
+
+          >
+          📊 Analytics
+          </Link>
+
+            + New Fundraiser
+
           </Link>
 
 
         </div>
 
 
-      </header>
 
 
 
 
+        {/* Dashboard Stats */}
 
-      <section className="max-w-7xl mx-auto px-8 py-12">
-
-
-        <h1 className="text-4xl font-bold">
-
-          Creator Dashboard
-
-        </h1>
-
-
-        <p className="text-gray-600 mt-2">
-
-          Track your fundraiser impact and share your campaign.
-
-        </p>
+        <div className="grid md:grid-cols-4 gap-6 mb-10">
 
 
 
-
-
-
-        {/* Stats */}
-
-        <div className="grid md:grid-cols-3 gap-6 mt-10">
-
-
-          <div className="bg-white rounded-2xl p-6 shadow">
+          <div className="bg-white rounded-2xl shadow p-6">
 
             <p className="text-gray-500">
               Fundraisers
             </p>
 
-            <p className="text-4xl font-bold text-purple-700">
-              {fundraisers.length}
-            </p>
+            <h2 className="text-4xl font-bold mt-2">
+              {user.fundraisers.length}
+            </h2>
 
           </div>
 
 
 
 
-          <div className="bg-white rounded-2xl p-6 shadow">
+
+          <div className="bg-white rounded-2xl shadow p-6">
 
             <p className="text-gray-500">
               Total Raised
             </p>
 
-            <p className="text-4xl font-bold text-green-600">
+            <h2 className="text-4xl font-bold text-green-600 mt-2">
               ${totalRaised.toFixed(2)}
-            </p>
+            </h2>
 
           </div>
 
 
 
 
-          <div className="bg-white rounded-2xl p-6 shadow">
+
+          <div className="bg-white rounded-2xl shadow p-6">
 
             <p className="text-gray-500">
-              Supporters
+              Survey Supporters
             </p>
 
-            <p className="text-4xl font-bold text-purple-700">
+            <h2 className="text-4xl font-bold text-purple-700 mt-2">
               {totalSupporters}
+            </h2>
+
+          </div>
+
+
+
+
+
+          <div className="bg-white rounded-2xl shadow p-6">
+
+            <p className="text-gray-500">
+              Total Views
             </p>
+
+            <h2 className="text-4xl font-bold text-blue-600 mt-2">
+              {totalViews}
+            </h2>
 
           </div>
 
@@ -202,37 +217,31 @@ export default function DashboardPage() {
 
 
 
-        {/* Campaigns */}
-
-        <div className="mt-12">
 
 
-          <h2 className="text-3xl font-bold mb-6">
 
-            My Fundraisers
+        <div className="bg-white rounded-3xl shadow-xl p-8">
 
+
+
+          <h2 className="text-2xl font-bold mb-6">
+            Your Fundraisers
           </h2>
 
 
 
 
 
-          {fundraisers.length === 0 ? (
 
-            <div className="bg-white rounded-2xl p-10 text-center shadow">
-
-
-              <h3 className="text-2xl font-bold">
-
-                No fundraisers yet
-
-              </h3>
+          {user.fundraisers.length === 0 ? (
 
 
-              <p className="text-gray-500 mt-3">
 
-                Create your first campaign and start earning support.
+            <div className="text-center py-16">
 
+
+              <p className="text-gray-500 mb-6">
+                You haven't created a fundraiser yet.
               </p>
 
 
@@ -241,117 +250,220 @@ export default function DashboardPage() {
 
                 href="/create"
 
-                className="inline-block mt-6 bg-purple-700 text-white px-6 py-3 rounded-xl"
+                className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl font-bold"
 
               >
-                Create Fundraiser
+
+                Create Your First Fundraiser
+
               </Link>
 
 
             </div>
 
 
+
+
           ) : (
 
 
-            <div className="grid lg:grid-cols-2 gap-8">
+
+
+            <div className="space-y-6">
 
 
 
-              {fundraisers.map((fundraiser)=>{
+
+
+              {user.fundraisers.map((fundraiser) => {
+
 
 
                 const percent =
+
                   fundraiser.goalAmount > 0
-                    ?
-                    Math.min(
-                      100,
-                      (fundraiser.amountRaised /
-                      fundraiser.goalAmount)
-                      *100
-                    )
-                    :
-                    0;
+
+                    ? Math.min(
+
+                        100,
+
+                        (fundraiser.amountRaised /
+                        fundraiser.goalAmount) * 100
+
+                      )
+
+                    : 0;
+
 
 
 
 
                 return (
 
+
+
                   <div
 
                     key={fundraiser.id}
 
-                    className="bg-white rounded-2xl shadow p-6"
+                    className="border rounded-2xl p-6 hover:shadow-lg transition"
 
                   >
 
 
 
-                    <h3 className="text-2xl font-bold">
-
-                      {fundraiser.title}
-
-                    </h3>
 
 
 
-                    <p className="text-gray-500 mt-2 line-clamp-2">
+                    {fundraiser.coverImage && (
 
-                      {fundraiser.story}
+                      <img
 
-                    </p>
+                        src={fundraiser.coverImage}
 
+                        alt={fundraiser.title}
 
-
-
-
-                    <div className="mt-6 flex justify-between">
-
-                      <span className="font-bold text-green-600">
-
-                        ${fundraiser.amountRaised.toFixed(2)}
-
-                      </span>
-
-
-                      <span>
-
-                        Goal ${fundraiser.goalAmount.toFixed(2)}
-
-                      </span>
-
-
-                    </div>
-
-
-
-
-
-                    <div className="mt-3 h-4 bg-gray-200 rounded-full">
-
-
-                      <div
-
-                        className="h-4 bg-purple-600 rounded-full"
-
-                        style={{
-                          width:`${percent}%`
-                        }}
+                        className="w-full h-48 object-cover rounded-xl mb-5"
 
                       />
 
+                    )}
+
+
+
+
+
+
+                    <div className="flex justify-between items-start">
+
+
+
+                      <div>
+
+                        <h3 className="text-2xl font-bold">
+
+                          {fundraiser.title}
+
+                        </h3>
+
+
+                        <p className="text-gray-500 mt-2">
+
+                          {fundraiser.category}
+
+                        </p>
+
+
+                      </div>
+
+
+
+
+
+
+                      <div className="flex gap-3">
+
+
+                        <Link
+
+                          href={`/f/${fundraiser.slug}`}
+
+                          className="bg-purple-100 hover:bg-purple-200 text-purple-700 px-4 py-2 rounded-lg font-semibold"
+
+                        >
+
+                          View
+
+                        </Link>
+
+
+
+
+
+                        <Link
+
+                          href={`/edit/${fundraiser.id}`}
+
+                          className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg font-semibold"
+
+                        >
+
+                          Edit
+
+                        </Link>
+
+
+
+
+
+                        <Link
+
+                          href={`/dashboard/share/${fundraiser.id}`}
+
+                          className="bg-green-100 hover:bg-green-200 text-green-700 px-4 py-2 rounded-lg font-semibold"
+
+                        >
+
+                          Share
+
+                        </Link>
+
+
+                      </div>
+
 
                     </div>
 
 
 
 
-                    <div className="mt-4 text-sm text-gray-500">
 
-                      {fundraiser.surveySupporters}
-                      {" "}
-                      supporters
+
+
+
+                    {/* Progress */}
+
+
+                    <div className="mt-6">
+
+
+                      <div className="flex justify-between text-sm font-semibold">
+
+
+                        <span>
+                          ${fundraiser.amountRaised.toFixed(2)}
+                        </span>
+
+
+                        <span>
+                          Goal ${fundraiser.goalAmount.toFixed(2)}
+                        </span>
+
+
+                      </div>
+
+
+
+
+
+                      <div className="mt-2 h-3 rounded-full bg-gray-200 overflow-hidden">
+
+
+                        <div
+
+                          className="bg-purple-600 h-full"
+
+                          style={{
+
+                            width:`${percent}%`
+
+                          }}
+
+                        />
+
+
+                      </div>
+
 
                     </div>
 
@@ -360,40 +472,103 @@ export default function DashboardPage() {
 
 
 
-                    <div className="mt-6 flex gap-3">
-
-
-                      <Link
-
-                        href={`/f/${fundraiser.slug}`}
-
-                        className="flex-1 text-center bg-purple-700 text-white py-3 rounded-xl"
-
-                      >
-
-                        View
-
-                      </Link>
 
 
 
-                      <button
-
-                        onClick={()=>copyLink(fundraiser.slug)}
-
-                        className="flex-1 border border-purple-700 text-purple-700 py-3 rounded-xl"
-
-                      >
-
-                        {copied === fundraiser.slug
-                          ?
-                          "Copied!"
-                          :
-                          "Share"
-                        }
+                    {/* Individual Stats */}
 
 
-                      </button>
+                    <div className="grid grid-cols-4 gap-4 mt-6 text-center">
+
+
+
+                      <div>
+
+                        <div className="font-bold text-xl">
+
+                          {fundraiser.views}
+
+                        </div>
+
+
+                        <div className="text-gray-500 text-sm">
+
+                          Views
+
+                        </div>
+
+
+                      </div>
+
+
+
+
+
+
+                      <div>
+
+                        <div className="font-bold text-xl">
+
+                          {fundraiser.surveySupporters}
+
+                        </div>
+
+
+                        <div className="text-gray-500 text-sm">
+
+                          Supporters
+
+                        </div>
+
+
+                      </div>
+
+
+
+
+
+
+                      <div>
+
+                        <div className="font-bold text-xl">
+
+                          ${fundraiser.amountRaised.toFixed(2)}
+
+                        </div>
+
+
+                        <div className="text-gray-500 text-sm">
+
+                          Raised
+
+                        </div>
+
+
+                      </div>
+
+
+
+
+
+
+                      <div>
+
+                        <div className="font-bold text-green-600">
+
+                          {fundraiser.status}
+
+                        </div>
+
+
+                        <div className="text-gray-500 text-sm">
+
+                          Status
+
+                        </div>
+
+
+                      </div>
+
 
 
                     </div>
@@ -405,6 +580,7 @@ export default function DashboardPage() {
                   </div>
 
 
+
                 );
 
 
@@ -412,7 +588,10 @@ export default function DashboardPage() {
 
 
 
+
             </div>
+
+
 
 
           )}
@@ -422,10 +601,14 @@ export default function DashboardPage() {
         </div>
 
 
-      </section>
+
+
+      </div>
+
 
 
     </main>
+
 
   );
 

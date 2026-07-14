@@ -2,28 +2,29 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
 
 
-export async function POST(request: Request) {
+export async function POST(req: Request) {
 
   try {
 
-    const body = await request.json();
+    const body = await req.json();
 
 
     const {
-      slug,
-      reward
+      fundraiserSlug,
+      transactionId,
+      rewardAmount
     } = body;
 
 
 
-    if (!slug) {
+    if (!fundraiserSlug) {
 
       return NextResponse.json(
         {
-          error: "Missing fundraiser slug"
+          error:"Missing fundraiser"
         },
         {
-          status: 400
+          status:400
         }
       );
 
@@ -31,13 +32,15 @@ export async function POST(request: Request) {
 
 
 
-    const fundraiser = await prisma.fundraiser.findUnique({
 
-      where: {
-        slug
-      }
+    const fundraiser =
+      await prisma.fundraiser.findUnique({
 
-    });
+        where:{
+          slug: fundraiserSlug
+        }
+
+      });
 
 
 
@@ -45,10 +48,10 @@ export async function POST(request: Request) {
 
       return NextResponse.json(
         {
-          error: "Fundraiser not found"
+          error:"Fundraiser not found"
         },
         {
-          status: 404
+          status:404
         }
       );
 
@@ -56,49 +59,54 @@ export async function POST(request: Request) {
 
 
 
-    const rewardAmount = reward || 1.50;
+
+    const reward =
+      Number(rewardAmount) || 1.50;
 
 
 
-    const updatedFundraiser =
-      await prisma.fundraiser.update({
 
-        where: {
-          slug
+    await prisma.surveyCompletion.create({
+
+      data:{
+
+        fundraiserId: fundraiser.id,
+
+        provider:"CPX Research",
+
+        transactionId,
+
+        rewardAmount:reward,
+
+        status:"COMPLETED"
+
+      }
+
+    });
+
+
+
+
+
+    await prisma.fundraiser.update({
+
+      where:{
+        id: fundraiser.id
+      },
+
+      data:{
+
+        amountRaised:{
+          increment:reward
         },
 
-
-        data: {
-
-          amountRaised: {
-
-            increment: rewardAmount
-
-          },
-
-
-          surveySupporters: {
-
-            increment: 1
-
-          },
-
-
-          surveyCompletions: {
-
-            create: {
-
-              provider: "Pollacle Test Survey",
-
-              rewardAmount
-
-            }
-
-          }
-
+        surveySupporters:{
+          increment:1
         }
 
-      });
+      }
+
+    });
 
 
 
@@ -106,30 +114,32 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
 
-      success: true,
+      success:true,
 
-      fundraiser: updatedFundraiser
+      message:"Survey credit applied"
 
     });
 
 
 
-  } catch (error) {
+  } catch(error){
 
-    console.error(error);
+
+    console.log(error);
 
 
     return NextResponse.json(
 
       {
-        error: "Server error"
+        error:"Server error"
       },
 
       {
-        status: 500
+        status:500
       }
 
     );
+
 
   }
 

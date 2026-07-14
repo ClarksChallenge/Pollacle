@@ -13,11 +13,13 @@ export async function generateMetadata({
     slug: string;
   };
 }): Promise<Metadata> {
+
   const fundraiser = await prisma.fundraiser.findUnique({
     where: {
       slug: params.slug,
     },
   });
+
 
   if (!fundraiser) {
     return {
@@ -26,6 +28,7 @@ export async function generateMetadata({
         "Support fundraisers by completing surveys instead of donating.",
     };
   }
+
 
   return {
     title: `${fundraiser.title} | Pollacle`,
@@ -49,11 +52,13 @@ export async function generateMetadata({
       card: "summary_large_image",
       title: fundraiser.title,
       description: fundraiser.story,
-
       images: [`/f/${fundraiser.slug}/opengraph-image`],
     },
   };
 }
+
+
+
 
 export default async function FundraiserPage({
   params,
@@ -96,6 +101,23 @@ export default async function FundraiserPage({
 
 
 
+  // TRACK FUNDRAISER VIEW
+  await prisma.fundraiser.update({
+
+    where: {
+      id: fundraiser.id,
+    },
+
+    data: {
+      views: {
+        increment: 1,
+      },
+    },
+
+  });
+
+
+
   const percent =
     fundraiser.goalAmount > 0
       ? Math.min(
@@ -117,7 +139,6 @@ export default async function FundraiserPage({
 
         <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
 
-
           <Link
             href="/"
             className="text-xl font-bold text-purple-700"
@@ -126,13 +147,9 @@ export default async function FundraiserPage({
           </Link>
 
 
-
           <Link
-
             href="/fundraisers"
-
             className="text-purple-700 font-semibold"
-
           >
             Browse Fundraisers
           </Link>
@@ -162,13 +179,11 @@ export default async function FundraiserPage({
             </span>
 
 
-
             <h1 className="text-5xl font-extrabold mt-5">
 
               {fundraiser.title}
 
             </h1>
-
 
 
             <p className="mt-5 text-lg text-purple-100">
@@ -189,6 +204,7 @@ export default async function FundraiserPage({
 
             <div className="flex justify-between font-bold text-lg">
 
+
               <span>
                 ${fundraiser.amountRaised.toFixed(2)} raised
               </span>
@@ -198,7 +214,9 @@ export default async function FundraiserPage({
                 Goal ${fundraiser.goalAmount.toFixed(2)}
               </span>
 
+
             </div>
+
 
 
 
@@ -215,12 +233,13 @@ export default async function FundraiserPage({
 
               />
 
-
             </div>
 
 
             <p className="mt-3 text-gray-500">
+
               {percent.toFixed(0)}% funded
+
             </p>
 
 
@@ -272,7 +291,9 @@ export default async function FundraiserPage({
 
 
 
+
               <div className="mt-8 flex flex-col md:flex-row gap-4 justify-center">
+
 
 
                 <Link
@@ -290,12 +311,16 @@ export default async function FundraiserPage({
 
 
                 <ShareButton
+
+                  url={`/f/${fundraiser.slug}`}
+
                   title={fundraiser.title}
+
                 />
 
 
-              </div>
 
+              </div>
 
 
             </div>
@@ -309,10 +334,36 @@ export default async function FundraiserPage({
 
 
 
-          <div className="grid md:grid-cols-3 gap-5 px-8 pb-8">
+
+          <div className="grid md:grid-cols-4 gap-5 px-8 pb-8">
+
 
 
             <div className="bg-gray-50 rounded-xl p-5 text-center">
+
+
+              <div className="text-3xl font-bold text-purple-700">
+
+                {fundraiser.views}
+
+              </div>
+
+
+              <p className="text-gray-500">
+
+                Views
+
+              </p>
+
+
+            </div>
+
+
+
+
+
+            <div className="bg-gray-50 rounded-xl p-5 text-center">
+
 
               <div className="text-3xl font-bold text-purple-700">
 
@@ -320,15 +371,22 @@ export default async function FundraiserPage({
 
               </div>
 
+
               <p className="text-gray-500">
+
                 Supporters
+
               </p>
+
 
             </div>
 
 
 
+
+
             <div className="bg-gray-50 rounded-xl p-5 text-center">
+
 
               <div className="text-3xl font-bold text-green-600">
 
@@ -336,15 +394,22 @@ export default async function FundraiserPage({
 
               </div>
 
+
               <p className="text-gray-500">
+
                 Raised
+
               </p>
+
 
             </div>
 
 
 
+
+
             <div className="bg-gray-50 rounded-xl p-5 text-center">
+
 
               <div className="text-3xl font-bold text-purple-700">
 
@@ -352,16 +417,19 @@ export default async function FundraiserPage({
 
               </div>
 
+
               <p className="text-gray-500">
-                Recent Surveys
+
+                Surveys
+
               </p>
+
 
             </div>
 
 
+
           </div>
-
-
 
 
 
@@ -378,19 +446,24 @@ export default async function FundraiserPage({
 
 
 
+
             {fundraiser.surveyCompletions.length === 0 ? (
 
               <p className="text-gray-500">
+
                 Be the first supporter!
+
               </p>
 
 
             ) : (
 
+
               <div className="space-y-4">
 
 
                 {fundraiser.surveyCompletions.map((item)=>(
+
 
                   <div
 
@@ -401,7 +474,9 @@ export default async function FundraiserPage({
                   >
 
                     <span>
+
                       🐙 Survey completed
+
                     </span>
 
 
@@ -414,10 +489,12 @@ export default async function FundraiserPage({
 
                   </div>
 
+
                 ))}
 
 
               </div>
+
 
             )}
 
