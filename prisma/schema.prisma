@@ -7,64 +7,41 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model Fundraiser {
-
   id                String   @id @default(cuid())
-
   slug              String   @unique
-
-  title             String
-
-  story             String
-
+  title             String   @db.VarChar(100)
+  story             String   @db.VarChar(5000)
   category          String
-
-
-  goalAmount        Float
-
-  amountRaised      Float    @default(0)
-
-
-  surveySupporters  Int      @default(0)
-
-  cashDonations     Int      @default(0)
-
-
   coverImage        String?
-
-
-  status            String   @default("ACTIVE")
-
-
-  surveyCompletions SurveyCompletion[]
-
-
+  goalAmount        Float
+  amountRaised      Float    @default(0)
+  surveySupporters  Int      @default(0)
+  cashDonations     Int      @default(0)
+  cpxCampaignId     String?
+  cpxSessionsCompleted Int   @default(0)
+  status            String   @default("PENDING")
+  creatorEmail      String?
   createdAt         DateTime @default(now())
-
   updatedAt         DateTime @updatedAt
-
+  surveyCompletions SurveyCompletion[]
+  @@index([status])
+  @@index([createdAt])
+  @@index([cpxCampaignId])
 }
 
-
-
 model SurveyCompletion {
-
   id             String   @id @default(cuid())
-
-
   fundraiserId   String
-
-
-  provider       String   @default("Pollacle Test Survey")
-
-
+  fundraiser     Fundraiser @relation(fields: [fundraiserId], references: [id], onDelete: Cascade)
+  provider       String
   rewardAmount   Float
-
-
+  cpxSessionId   String?  @unique
+  cpxUserId      String?
+  cpxOfferId     String?
+  cpxPayout      Float?
   completedAt    DateTime @default(now())
-
-
-  fundraiser     Fundraiser @relation(fields: [fundraiserId], references: [id])
-
+  @@index([fundraiserId])
+  @@index([cpxSessionId])
+  @@index([provider])
 }
