@@ -78,5 +78,16 @@ export async function GET(req: Request) {
     return { fundraiserId: c.fundraiserId, title: info?.title||'Unknown', slug: info?.slug||'', completions: c._count._all, revenue: c._sum.rewardAmount ?? 0, views: info?.views ?? 0, totalRaised: info?.amountRaised ?? 0 };
   });
 
-  return NextResponse.json({ timeSeries, sessionsStarted, completionsCount, totalRewards, conversionRate, utmSources, topFundraisers, perFund });
+  // Channel attribution: map referrers to channels
+  const sessions = await prisma.surveySession.findMany({ where: { startedAt: { gte: start, lte: end } }, select: { referrer: true } });
+  const { mapReferrerToChannel } = await import('@/app/lib/analytics');
+  const channelCounts: Record<string, number> = {};
+  for (const s of sessions) {
+    const ch = mapReferrerToChannel(s.referrer);
+    channelCounts[ch] = (channelCounts[ch] || 0) + 1;
+  }
+
+  const channels = Object.keys(channelCounts).map(k=>({ channel: k, count: channelCounts[k] }));
+
+  return NextResponse.json({ timeSeries, sessionsStarted, completionsCount, totalRewards, conversionRate, utmSources, topFundraisers, perFund, channels });
 }
