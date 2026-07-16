@@ -5,6 +5,7 @@ import Link from "next/link";
 import { authOptions } from "@/app/lib/auth";
 import { prisma } from "@/app/lib/prisma";
 import FounderCharts from '@/components/FounderCharts';
+import FounderMetricsClient from '@/components/FounderMetricsClient';
 
 export default async function FounderDashboard() {
   const session = await getServerSession(authOptions as any);
@@ -114,6 +115,8 @@ export default async function FounderDashboard() {
     };
   });
 
+  const initialData = { timeSeries, sessionsStarted, completionsCount, totalRewards, conversionRate, utmSources, topFundraisers, perFund };
+
   return (
     <main className="min-h-screen bg-gray-50">
       <div className="max-w-6xl mx-auto px-6 py-12">
@@ -188,19 +191,7 @@ export default async function FounderDashboard() {
             </ul>
           </div>
           <div>
-            <FounderCharts timeSeries={timeSeries} topReferrers={topReferrers} />
-
-            <div className="bg-white rounded-xl shadow p-6 mt-6">
-              <h4 className="font-semibold mb-3">Top UTM Sources (30d)</h4>
-              <ul className="space-y-2">
-                {utmSources.map((u) => (
-                  <li key={u.utmSource || 'direct'} className="flex justify-between">
-                    <div className="truncate">{u.utmSource || 'Direct'}</div>
-                    <div className="text-sm text-gray-600">{u._count.utmSource}</div>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <FounderMetricsClient initialData={initialData} defaultStart={start.toISOString().slice(0,10)} defaultEnd={new Date().toISOString().slice(0,10)} />
           </div>
         </div>
 
