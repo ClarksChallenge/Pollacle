@@ -25,9 +25,13 @@ async function main() {
         userId: user.id,
         title: fundraiserTitle,
         slug: 'founder-fundraiser',
-        goalCents: 10000,
-        description: 'Founder launch fundraiser (auto-seeded).',
-        featured: true,
+        story: 'Founder launch fundraiser (auto-seeded).',
+        category: 'General',
+        goalAmount: 100.0,
+        amountRaised: 0,
+        surveySupporters: 0,
+        views: 0,
+        status: 'ACTIVE',
       },
     });
     console.log('Created founder fundraiser id:', fund.id);
