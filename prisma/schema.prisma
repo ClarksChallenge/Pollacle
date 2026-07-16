@@ -137,3 +137,16 @@ model SurveySession {
 
   fundraiser Fundraiser @relation(fields: [fundraiserId], references: [id], onDelete: Cascade)
 }
+
+model Consent {
+  id String @id @default(cuid())
+  userId String?
+  email String?
+  purpose String
+  value Boolean @default(true)
+  ip String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id])
+}

@@ -1,0 +1,45 @@
+name: CPX Smoke Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Start server
+        run: |
+          npm run start:prod &
+          for i in {1..30}; do
+            curl -sSf http://localhost:3000/api/health && break || sleep 2
+          done
+
+      - name: Create survey session
+        env:
+          FOUNDER_EMAIL: ${{ secrets.FOUNDER_EMAIL }}
+        run: |
+          set -e
+          SLUG=founder-fundraiser
+          PAYLOAD='{"fundraiserSlug":"'$SLUG'","referrer":"smoke"}'
+          curl -sS -X POST http://localhost:3000/api/survey/start -H "Content-Type: application/json" -d "$PAYLOAD" -o response.json
+          cat response.json
+
+      - name: Simulate CPX callback
+        env:
+          CPX_CALLBACK_SECRET: ${{ secrets.CPX_CALLBACK_SECRET }}
+        run: |
+          set -e
+          SESSION_ID=$(jq -r .sessionId response.json)
+          curl -sS -X POST http://localhost:3000/api/cpx/callback -H "Content-Type: application/json" -d '{"sessionId":"'$SESSION_ID'","reward":1.5,"secret":"'${CPX_CALLBACK_SECRET}'","transactionId":"smoke-tx"}' -o cb.json || true
+          cat cb.json || true
