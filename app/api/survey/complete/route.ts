@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
+import { logServerError } from "@/app/lib/server-helpers";
 
 
 export async function POST(req: Request) {
@@ -57,11 +58,24 @@ export async function POST(req: Request) {
 
     }
 
+    // Ensure fundraiser belongs to founder during single-founder launch
+    const founderEmail = process.env.FOUNDER_EMAIL;
+    if (!founderEmail) {
+      return NextResponse.json({ error: "Platform not configured for public use" }, { status: 403 });
+    }
+    const founder = await prisma.user.findUnique({ where: { email: founderEmail } });
+    if (!founder || fundraiser.userId !== founder.id) {
+      return NextResponse.json({ error: "Fundraiser not available" }, { status: 403 });
+    }
 
 
 
-    const reward =
-      Number(rewardAmount) || 1.50;
+
+    const reward = Number(rewardAmount) || 1.5;
+
+    if (isNaN(reward) || reward <= 0) {
+      return NextResponse.json({ error: "Invalid reward amount" }, { status: 400 });
+    }
 
 
 
@@ -122,25 +136,9 @@ export async function POST(req: Request) {
 
 
 
-  } catch(error){
-
-
-    console.log(error);
-
-
-    return NextResponse.json(
-
-      {
-        error:"Server error"
-      },
-
-      {
-        status:500
-      }
-
-    );
-
-
+  } catch (error) {
+    logServerError("survey-complete", error);
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 
 }

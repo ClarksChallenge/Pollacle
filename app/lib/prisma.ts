@@ -1,4 +1,6 @@
 import { PrismaClient } from "@prisma/client";
+// Ensure required env vars are validated early
+import "./config";
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;

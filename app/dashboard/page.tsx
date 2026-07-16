@@ -47,37 +47,27 @@ export default async function DashboardPage() {
 
 
 
-  const totalRaised = user.fundraisers.reduce(
 
+  const totalRaised = user.fundraisers.reduce(
     (sum, fundraiser) =>
       sum + fundraiser.amountRaised,
-
     0
-
   );
-
 
 
 
   const totalSupporters = user.fundraisers.reduce(
-
     (sum, fundraiser) =>
       sum + fundraiser.surveySupporters,
-
     0
-
   );
 
 
 
-
   const totalViews = user.fundraisers.reduce(
-
     (sum, fundraiser) =>
       sum + fundraiser.views,
-
     0
-
   );
 
 
@@ -104,9 +94,8 @@ export default async function DashboardPage() {
 
 
             <p className="text-gray-600 mt-2">
-              Welcome back, {user.name || "Creator"} 👋
+              Welcome back, {user.name || "Founder"} 👋
             </p>
-
 
           </div>
 
@@ -114,25 +103,16 @@ export default async function DashboardPage() {
 
           <Link
 
-            href="/create"
+            href="/dashboard/analytics"
 
-            className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl font-bold"
-
-          >
-
-          <Link
-
-          href="/dashboard/analytics"
-
-          className="bg-blue-100 hover:bg-blue-200 text-blue-700 px-6 py-3 rounded-xl font-bold"
+            className="bg-blue-100 hover:bg-blue-200 text-blue-700 px-6 py-3 rounded-xl font-bold"
 
           >
-          📊 Analytics
-          </Link>
 
-            + New Fundraiser
+            📊 Analytics
 
           </Link>
+
 
 
         </div>
@@ -142,7 +122,6 @@ export default async function DashboardPage() {
 
 
 
-        {/* Dashboard Stats */}
 
         <div className="grid md:grid-cols-4 gap-6 mb-10">
 
@@ -225,9 +204,8 @@ export default async function DashboardPage() {
 
 
           <h2 className="text-2xl font-bold mb-6">
-            Your Fundraisers
+            Pollacle Launch Fundraiser
           </h2>
-
 
 
 
@@ -236,43 +214,22 @@ export default async function DashboardPage() {
           {user.fundraisers.length === 0 ? (
 
 
-
             <div className="text-center py-16">
 
 
-              <p className="text-gray-500 mb-6">
-                You haven't created a fundraiser yet.
+              <p className="text-gray-500">
+                No fundraiser connected yet.
               </p>
 
 
-
-              <Link
-
-                href="/create"
-
-                className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl font-bold"
-
-              >
-
-                Create Your First Fundraiser
-
-              </Link>
-
-
             </div>
-
-
 
 
           ) : (
 
 
 
-
             <div className="space-y-6">
-
-
-
 
 
               {user.fundraisers.map((fundraiser) => {
@@ -313,27 +270,6 @@ export default async function DashboardPage() {
 
 
 
-
-
-                    {fundraiser.coverImage && (
-
-                      <img
-
-                        src={fundraiser.coverImage}
-
-                        alt={fundraiser.title}
-
-                        className="w-full h-48 object-cover rounded-xl mb-5"
-
-                      />
-
-                    )}
-
-
-
-
-
-
                     <div className="flex justify-between items-start">
 
 
@@ -361,55 +297,18 @@ export default async function DashboardPage() {
 
 
 
-                      <div className="flex gap-3">
+                      <Link
 
+                        href={`/f/${fundraiser.slug}`}
 
-                        <Link
+                        className="bg-purple-100 hover:bg-purple-200 text-purple-700 px-4 py-2 rounded-lg font-semibold"
 
-                          href={`/f/${fundraiser.slug}`}
+                      >
 
-                          className="bg-purple-100 hover:bg-purple-200 text-purple-700 px-4 py-2 rounded-lg font-semibold"
+                        View
 
-                        >
+                      </Link>
 
-                          View
-
-                        </Link>
-
-
-
-
-
-                        <Link
-
-                          href={`/edit/${fundraiser.id}`}
-
-                          className="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg font-semibold"
-
-                        >
-
-                          Edit
-
-                        </Link>
-
-
-
-
-
-                        <Link
-
-                          href={`/dashboard/share/${fundraiser.id}`}
-
-                          className="bg-green-100 hover:bg-green-200 text-green-700 px-4 py-2 rounded-lg font-semibold"
-
-                        >
-
-                          Share
-
-                        </Link>
-
-
-                      </div>
 
 
                     </div>
@@ -418,10 +317,6 @@ export default async function DashboardPage() {
 
 
 
-
-
-
-                    {/* Progress */}
 
 
                     <div className="mt-6">
@@ -454,9 +349,7 @@ export default async function DashboardPage() {
                           className="bg-purple-600 h-full"
 
                           style={{
-
                             width:`${percent}%`
-
                           }}
 
                         />
@@ -475,9 +368,6 @@ export default async function DashboardPage() {
 
 
 
-                    {/* Individual Stats */}
-
-
                     <div className="grid grid-cols-4 gap-4 mt-6 text-center">
 
 
@@ -485,21 +375,14 @@ export default async function DashboardPage() {
                       <div>
 
                         <div className="font-bold text-xl">
-
                           {fundraiser.views}
-
                         </div>
 
-
                         <div className="text-gray-500 text-sm">
-
                           Views
-
                         </div>
 
-
                       </div>
-
 
 
 
@@ -508,21 +391,14 @@ export default async function DashboardPage() {
                       <div>
 
                         <div className="font-bold text-xl">
-
                           {fundraiser.surveySupporters}
-
                         </div>
-
 
                         <div className="text-gray-500 text-sm">
-
                           Supporters
-
                         </div>
 
-
                       </div>
-
 
 
 
@@ -531,21 +407,14 @@ export default async function DashboardPage() {
                       <div>
 
                         <div className="font-bold text-xl">
-
                           ${fundraiser.amountRaised.toFixed(2)}
-
                         </div>
-
 
                         <div className="text-gray-500 text-sm">
-
                           Raised
-
                         </div>
 
-
                       </div>
-
 
 
 
@@ -554,18 +423,12 @@ export default async function DashboardPage() {
                       <div>
 
                         <div className="font-bold text-green-600">
-
                           {fundraiser.status}
-
                         </div>
-
 
                         <div className="text-gray-500 text-sm">
-
                           Status
-
                         </div>
-
 
                       </div>
 
@@ -576,9 +439,7 @@ export default async function DashboardPage() {
 
 
 
-
                   </div>
-
 
 
                 );
@@ -588,10 +449,7 @@ export default async function DashboardPage() {
 
 
 
-
             </div>
-
-
 
 
           )}

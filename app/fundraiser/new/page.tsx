@@ -1,112 +1,120 @@
-"use client";
-
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-
-function slugify(text: string) {
-  return text
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9\s-]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-");
-}
-
 export default function NewFundraiserPage() {
-  const router = useRouter();
-
-  const [title, setTitle] = useState("");
-  const [story, setStory] = useState("");
-  const [category, setCategory] = useState("general");
-  const [goalAmount, setGoalAmount] = useState(1000);
-
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
-
-    const slug = slugify(title);
-
-    try {
-      const res = await fetch("/api/fundraiser", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          title,
-          story,
-          category,
-          goalAmount,
-          slug,
-        }),
-      });
-
-      if (!res.ok) {
-        throw new Error("Failed to create fundraiser");
-      }
-
-      const data = await res.json();
-
-      // redirect to future public page
-      router.push(`/f/${data.slug}`);
-    } catch (err: any) {
-      setError(err.message || "Something went wrong");
-    } finally {
-      setLoading(false);
-    }
-  }
-
   return (
-    <div className="max-w-xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">Create Fundraiser</h1>
+    <main className="min-h-screen bg-gray-100 flex items-center justify-center px-6">
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          className="w-full border p-2"
-          placeholder="Title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          required
-        />
+      <div className="max-w-xl w-full bg-white rounded-3xl shadow-xl p-10 text-center">
 
-        <textarea
-          className="w-full border p-2"
-          placeholder="Story"
-          value={story}
-          onChange={(e) => setStory(e.target.value)}
-          rows={5}
-          required
-        />
 
-        <input
-          className="w-full border p-2"
-          placeholder="Category"
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-        />
+        {/* Mascot */}
 
-        <input
-          className="w-full border p-2"
-          type="number"
-          placeholder="Goal Amount"
-          value={goalAmount}
-          onChange={(e) => setGoalAmount(Number(e.target.value))}
-        />
+        <div className="flex justify-center mb-6">
 
-        <button
-          type="submit"
-          className="bg-black text-white px-4 py-2 rounded w-full"
-          disabled={loading}
-        >
-          {loading ? "Creating..." : "Create Fundraiser"}
-        </button>
+          <div className="text-7xl">
+            🐙
+          </div>
 
-        {error && <p className="text-red-500">{error}</p>}
-      </form>
-    </div>
+        </div>
+
+
+
+
+        <h1 className="text-4xl font-extrabold text-purple-700">
+          Pollacle Launch Mode
+        </h1>
+
+
+
+
+        <p className="mt-5 text-gray-600 text-lg leading-8">
+
+          New fundraiser creation is temporarily disabled while
+          Pollacle completes its first live launch test.
+
+        </p>
+
+
+
+
+
+        <div className="mt-8 bg-purple-50 rounded-2xl p-6">
+
+
+          <h2 className="text-xl font-bold text-purple-700">
+
+            🐙 Single-Founder Launch
+
+          </h2>
+
+
+
+          <p className="mt-3 text-gray-600 leading-7">
+
+            Pollacle is currently testing the complete
+            survey-to-support experience with our first official
+            fundraiser.
+
+            We are verifying CPX Research survey connections,
+            conversion tracking, rewards, and reporting before
+            opening the platform to additional creators.
+
+          </p>
+
+
+        </div>
+
+
+
+
+
+
+        <div className="mt-6 bg-gray-50 rounded-xl p-5 text-left">
+
+
+          <h3 className="font-bold text-gray-800 mb-3">
+
+            Creator Fundraisers Will Open After Testing
+
+          </h3>
+
+
+          <ul className="space-y-2 text-gray-600">
+
+            <li>
+              ✅ Creator accounts
+            </li>
+
+            <li>
+              ✅ Fundraiser creation
+            </li>
+
+            <li>
+              ✅ Survey-powered campaigns
+            </li>
+
+            <li>
+              ✅ CPX Research verified rewards
+            </li>
+
+          </ul>
+
+
+        </div>
+
+
+
+
+
+        <p className="mt-6 text-purple-700 font-semibold">
+
+          Thank you for helping us test Pollacle 🐙
+
+        </p>
+
+
+
+      </div>
+
+
+    </main>
   );
 }

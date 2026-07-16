@@ -15,12 +15,20 @@ export default function Footer() {
             🐙 Pollacle
           </h2>
 
+
           <p className="mt-4 text-gray-600 leading-7">
             Turning survey participation into meaningful support
             for communities, creators, schools, and organizations.
           </p>
 
+
+          <p className="mt-4 text-sm text-gray-500">
+            Powered by CPX Research survey technology.
+          </p>
+
         </div>
+
+
 
 
 
@@ -35,12 +43,23 @@ export default function Footer() {
 
           <div className="space-y-3 text-gray-600">
 
+
             <Link
               href="/"
               className="block hover:text-purple-700"
             >
               Home
             </Link>
+
+
+
+            <Link
+              href="/fundraisers"
+              className="block hover:text-purple-700"
+            >
+              Browse Fundraisers
+            </Link>
+
 
 
             <Link
@@ -51,13 +70,6 @@ export default function Footer() {
             </Link>
 
 
-            <Link
-              href="/create"
-              className="block hover:text-purple-700"
-            >
-              Create Fundraiser
-            </Link>
-
 
             <Link
               href="/dashboard"
@@ -66,9 +78,14 @@ export default function Footer() {
               Creator Dashboard
             </Link>
 
+
           </div>
 
+
         </div>
+
+
+
 
 
 
@@ -82,6 +99,7 @@ export default function Footer() {
           </h3>
 
 
+
           <div className="space-y-3 text-gray-600">
 
 
@@ -93,12 +111,14 @@ export default function Footer() {
             </Link>
 
 
+
             <Link
               href="/terms"
               className="block hover:text-purple-700"
             >
               Terms of Service
             </Link>
+
 
 
             <Link
@@ -111,10 +131,13 @@ export default function Footer() {
 
           </div>
 
+
         </div>
 
 
       </div>
+
+
 
 
 

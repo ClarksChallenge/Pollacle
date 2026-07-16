@@ -2,134 +2,111 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 
 import { prisma } from "@/app/lib/prisma";
+import { logServerError } from "@/app/lib/server-helpers";
 import { authOptions } from "@/app/lib/auth";
 
-
 export async function POST(request: Request) {
+  try {
+    // Founder must be logged in
+    const session = await getServerSession(authOptions);
 
+    if (!session?.user?.email) {
+      return NextResponse.json(
+        {
+          error: "Unauthorized",
+        },
+        {
+          status: 401,
+        }
+      );
+    }
 
-  const session = await getServerSession(authOptions);
-
-
-  if (!session?.user?.email) {
-
-    return NextResponse.json(
-      {
-        error: "Unauthorized",
+    // Find logged in user
+    const user = await prisma.user.findUnique({
+      where: {
+        email: session.user.email,
       },
-      {
-        status: 401,
-      }
-    );
+    });
 
-  }
+    if (!user) {
+      return NextResponse.json(
+        {
+          error: "User not found.",
+        },
+        {
+          status: 404,
+        }
+      );
+    }
 
+    const formData = await request.formData();
 
+    const fundraiserId = formData.get("id") as string;
 
-  const user = await prisma.user.findUnique({
+    if (!fundraiserId) {
+      return NextResponse.json(
+        {
+          error: "Missing fundraiser id.",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
 
-    where: {
-      email: session.user.email,
-    },
-
-  });
-
-
-
-  if (!user) {
-
-    return NextResponse.json(
-      {
-        error: "User not found",
+    // Verify ownership
+    const fundraiser = await prisma.fundraiser.findFirst({
+      where: {
+        id: fundraiserId,
+        userId: user.id,
       },
-      {
-        status: 401,
-      }
-    );
+    });
 
-  }
+    if (!fundraiser) {
+      return NextResponse.json(
+        {
+          error: "You do not have permission to edit this fundraiser.",
+        },
+        {
+          status: 403,
+        }
+      );
+    }
 
+    const title = (formData.get("title") as string)?.trim();
+    const story = (formData.get("story") as string)?.trim();
+    const category = (formData.get("category") as string)?.trim();
+    const goalAmount = Number(formData.get("goalAmount"));
 
+    if (!title || !story || !category || isNaN(goalAmount)) {
+      return NextResponse.json(
+        {
+          error: "Please complete all required fields.",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
 
-
-
-  const formData = await request.formData();
-
-
-
-  const id = formData.get("id") as string;
-
-
-
-  const fundraiser = await prisma.fundraiser.findFirst({
-
-    where: {
-
-      id,
-
-      userId: user.id,
-
-    },
-
-  });
-
-
-
-
-
-  if (!fundraiser) {
-
-    return NextResponse.json(
-
-      {
-        error: "You do not own this fundraiser",
+    await prisma.fundraiser.update({
+      where: {
+        id: fundraiser.id,
       },
+      data: {
+        title,
+        story,
+        category,
+        goalAmount,
+      },
+    });
 
-      {
-        status: 403,
-      }
-
+    return NextResponse.redirect(
+      new URL("/founder/edit?saved=1", request.url),
+      303
     );
-
+  } catch (error) {
+    logServerError("fundraiser-update", error);
+    return NextResponse.json({ error: "Server error." }, { status: 500 });
   }
-
-
-
-
-
-  await prisma.fundraiser.update({
-
-    where: {
-
-      id,
-
-    },
-
-    data: {
-
-      title: formData.get("title") as string,
-
-      story: formData.get("story") as string,
-
-      category: formData.get("category") as string,
-
-      goalAmount: Number(
-        formData.get("goalAmount")
-      ),
-
-    },
-
-  });
-
-
-
-
-
-  return NextResponse.redirect(
-
-    new URL("/dashboard", request.url)
-
-  );
-
-
 }

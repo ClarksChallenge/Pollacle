@@ -12,7 +12,7 @@ export default function Navbar() {
           href="/"
           className="text-2xl font-bold text-purple-700"
         >
-          Pollacle
+          🐙 Pollacle
         </Link>
 
 
@@ -27,6 +27,7 @@ export default function Navbar() {
             Home
           </Link>
 
+
           <Link
             href="/fundraisers"
             className="hover:text-purple-700 transition"
@@ -34,12 +35,14 @@ export default function Navbar() {
             Browse Fundraisers
           </Link>
 
+
           <Link
             href="/#how"
             className="hover:text-purple-700 transition"
           >
             How It Works
           </Link>
+
 
           <Link
             href="/about"
@@ -53,23 +56,27 @@ export default function Navbar() {
 
         {/* Right Side */}
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
+
 
           <Link
             href="/login"
-            className="text-gray-700 hover:text-purple-700"
+            className="text-gray-700 hover:text-purple-700 transition"
           >
             Login
           </Link>
 
+
           <Link
-            href="/create"
+            href="/fundraisers"
             className="bg-purple-700 hover:bg-purple-800 text-white px-5 py-2 rounded-xl font-semibold transition"
           >
-            Start a Fundraiser
+            Support a Fundraiser
           </Link>
 
+
         </div>
+
 
       </div>
 

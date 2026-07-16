@@ -1,11 +1,16 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
+import { logServerError } from "@/app/lib/server-helpers";
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    const { fundraiserSlug } = body;
+    const { fundraiserSlug,
+      referrer,
+      utmSource,
+      utmMedium,
+      utmCampaign, } = body;
 
     if (!fundraiserSlug) {
       return NextResponse.json(
@@ -35,6 +40,17 @@ export async function POST(req: Request) {
       );
     }
 
+    // Ensure fundraiser is the founder's during single-founder launch
+    const founderEmail = process.env.FOUNDER_EMAIL;
+    if (!founderEmail) {
+      return NextResponse.json({ error: "Platform is not configured for public use." }, { status: 403 });
+    }
+
+    const founder = await prisma.user.findUnique({ where: { email: founderEmail } });
+    if (!founder || fundraiser.userId !== founder.id) {
+      return NextResponse.json({ error: "Fundraiser not available" }, { status: 403 });
+    }
+
     // Count this visit
     await prisma.fundraiser.update({
       where: {
@@ -53,6 +69,11 @@ export async function POST(req: Request) {
         fundraiserId: fundraiser.id,
         status: "STARTED",
         provider: "CPX Research",
+        referrer: referrer || "Direct",
+        utmSource: utmSource || null,
+        utmMedium: utmMedium || null,
+        utmCampaign: utmCampaign || null,
+
       },
     });
 
@@ -74,15 +95,7 @@ export async function POST(req: Request) {
       surveyUrl,
     });
   } catch (error) {
-    console.error(error);
-
-    return NextResponse.json(
-      {
-        error: "Server error",
-      },
-      {
-        status: 500,
-      }
-    );
+    logServerError("survey-start", error);
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }

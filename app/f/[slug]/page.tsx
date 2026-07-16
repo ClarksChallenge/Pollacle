@@ -1,9 +1,18 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+
 import { prisma } from "@/app/lib/prisma";
 import { notFound } from "next/navigation";
+
 import ShareButton from "@/components/ShareButton";
+
+
+// SINGLE FOUNDER LAUNCH MODE
+// Always show live fundraiser data
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 
 
 export async function generateMetadata({
@@ -14,523 +23,648 @@ export async function generateMetadata({
   };
 }): Promise<Metadata> {
 
+
   const fundraiser = await prisma.fundraiser.findUnique({
-    where: {
+
+    where:{
       slug: params.slug,
     },
+
   });
 
 
+
   if (!fundraiser) {
+
     return {
-      title: "Pollacle Fundraiser",
+
+      title:"Pollacle Fundraiser",
+
       description:
         "Support fundraisers by completing surveys instead of donating.",
+
     };
+
   }
 
 
+
   return {
-    title: `${fundraiser.title} | Pollacle`,
-    description: fundraiser.story,
 
-    openGraph: {
-      title: fundraiser.title,
-      description: fundraiser.story,
+    title:`${fundraiser.title} | Pollacle`,
 
-      images: [
+    description:fundraiser.story,
+
+
+    openGraph:{
+
+      title:fundraiser.title,
+
+      description:fundraiser.story,
+
+      images:[
         {
-          url: `/f/${fundraiser.slug}/opengraph-image`,
-          width: 1200,
-          height: 630,
-          alt: fundraiser.title,
+          url:`/f/${fundraiser.slug}/opengraph-image`,
+          width:1200,
+          height:630,
+          alt:fundraiser.title,
         },
       ],
+
     },
 
-    twitter: {
-      card: "summary_large_image",
-      title: fundraiser.title,
-      description: fundraiser.story,
-      images: [`/f/${fundraiser.slug}/opengraph-image`],
+
+    twitter:{
+
+      card:"summary_large_image",
+
+      title:fundraiser.title,
+
+      description:fundraiser.story,
+
+      images:[
+        `/f/${fundraiser.slug}/opengraph-image`
+      ],
+
     },
+
   };
+
 }
 
 
 
 
 export default async function FundraiserPage({
+
   params,
-}: {
-  params: {
-    slug: string;
+
+}:{
+
+  params:{
+    slug:string;
   };
+
 }) {
 
 
-  const fundraiser = await prisma.fundraiser.findUnique({
 
-    where: {
-      slug: params.slug,
-    },
+  const fundraiser =
+    await prisma.fundraiser.findUnique({
 
-    include: {
+      where:{
+        slug:params.slug,
+      },
 
-      surveyCompletions: {
 
-        orderBy: {
-          completedAt: "desc",
+      include:{
+
+
+        surveyCompletions:{
+
+
+          orderBy:{
+
+            completedAt:"desc",
+
+          },
+
+
+          take:5,
+
+
         },
 
-        take: 5,
 
       },
 
-    },
 
-  });
-
+    });
 
 
-  if (!fundraiser) {
+
+
+
+  if(!fundraiser){
 
     notFound();
 
   }
 
+  // Enforce single-founder launch lock: only allow founder fundraisers
+  const founderEmail = process.env.FOUNDER_EMAIL;
+  if (!founderEmail) {
+    notFound();
+  }
+
+  const founder = await prisma.user.findUnique({ where: { email: founderEmail } });
+  if (!founder || fundraiser.userId !== founder.id) {
+    notFound();
+  }
 
 
-  // TRACK FUNDRAISER VIEW
+
+
+
+  // TRACK PUBLIC VIEWS
+
   await prisma.fundraiser.update({
 
-    where: {
-      id: fundraiser.id,
+    where:{
+      id:fundraiser.id,
     },
 
-    data: {
-      views: {
-        increment: 1,
+
+    data:{
+
+      views:{
+        increment:1,
       },
+
     },
+
 
   });
 
 
 
+
+
+
   const percent =
+
     fundraiser.goalAmount > 0
+
       ? Math.min(
+
           100,
+
           (fundraiser.amountRaised /
-            fundraiser.goalAmount) *
-            100
+          fundraiser.goalAmount) * 100
+
         )
+
       : 0;
 
 
 
-  return (
 
-    <main className="min-h-screen bg-gray-50">
 
 
-      <header className="bg-white border-b">
+return (
 
-        <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+<main className="min-h-screen bg-gray-50">
 
-          <Link
-            href="/"
-            className="text-xl font-bold text-purple-700"
-          >
-            🐙 Pollacle
-          </Link>
 
 
-          <Link
-            href="/fundraisers"
-            className="text-purple-700 font-semibold"
-          >
-            Browse Fundraisers
-          </Link>
+<header className="bg-white border-b">
 
 
-        </div>
+<div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
 
-      </header>
 
+<Link
 
+href="/"
 
+className="text-xl font-bold text-purple-700"
 
+>
 
-      <div className="max-w-5xl mx-auto px-6 py-12">
+🐙 Pollacle
 
+</Link>
 
-        <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
 
 
-          <div className="bg-purple-700 text-white p-10">
 
+<Link
 
-            <span className="inline-block bg-white/20 px-4 py-1 rounded-full text-sm">
+href="/fundraisers"
 
-              {fundraiser.category}
+className="text-purple-700 font-semibold"
 
-            </span>
+>
 
+Browse Fundraisers
 
-            <h1 className="text-5xl font-extrabold mt-5">
+</Link>
 
-              {fundraiser.title}
 
-            </h1>
+</div>
 
 
-            <p className="mt-5 text-lg text-purple-100">
+</header>
 
-              {fundraiser.story}
 
-            </p>
 
 
-          </div>
 
 
+<div className="max-w-5xl mx-auto px-6 py-12">
 
 
+<div className="bg-white rounded-3xl shadow-xl overflow-hidden">
 
-          <div className="p-8">
 
 
-            <div className="flex justify-between font-bold text-lg">
 
 
-              <span>
-                ${fundraiser.amountRaised.toFixed(2)} raised
-              </span>
+<div className="bg-purple-700 text-white p-10">
 
 
-              <span>
-                Goal ${fundraiser.goalAmount.toFixed(2)}
-              </span>
+<span className="inline-block bg-white/20 px-4 py-1 rounded-full text-sm">
 
+{fundraiser.category}
 
-            </div>
+</span>
 
 
 
+<h1 className="text-5xl font-extrabold mt-5">
 
-            <div className="mt-4 h-5 bg-gray-200 rounded-full overflow-hidden">
+{fundraiser.title}
 
+</h1>
 
-              <div
 
-                className="h-full bg-purple-600"
 
-                style={{
-                  width: `${percent}%`,
-                }}
+<p className="mt-5 text-lg text-purple-100">
 
-              />
+{fundraiser.story}
 
-            </div>
+</p>
 
 
-            <p className="mt-3 text-gray-500">
 
-              {percent.toFixed(0)}% funded
+</div>
 
-            </p>
 
 
-          </div>
 
 
 
 
+<div className="p-8">
 
 
+<div className="flex justify-between font-bold text-lg">
 
-          <div className="px-8 pb-8">
 
+<span>
 
-            <div className="bg-purple-50 rounded-2xl p-8 text-center">
+${fundraiser.amountRaised.toFixed(2)} raised
 
+</span>
 
-              <Image
 
-                src="/pollacle.png"
+<span>
 
-                alt="Pollacle mascot"
+Goal ${fundraiser.goalAmount.toFixed(2)}
 
-                width={150}
+</span>
 
-                height={150}
 
-                className="mx-auto"
+</div>
 
-              />
 
 
 
-              <h2 className="text-3xl font-bold text-purple-700 mt-4">
 
-                Support this fundraiser without donating
+<div className="mt-4 h-5 bg-gray-200 rounded-full overflow-hidden">
 
-              </h2>
 
+<div
 
+className="h-full bg-purple-600"
 
-              <p className="mt-3 text-gray-600 max-w-xl mx-auto">
+style={{
 
-                Complete surveys from trusted research partners.
-                Pollacle rewards are automatically credited toward this fundraiser.
+width:`${percent}%`
 
-              </p>
+}}
 
+/>
 
 
+</div>
 
 
-              <div className="mt-8 flex flex-col md:flex-row gap-4 justify-center">
 
+<p className="mt-3 text-gray-500">
 
+{percent.toFixed(0)}% funded
 
-                <Link
+</p>
 
-                  href={`/survey?fundraiser=${fundraiser.slug}`}
 
-                  className="bg-purple-700 hover:bg-purple-800 text-white text-xl font-bold px-10 py-5 rounded-2xl"
+</div>
 
-                >
 
-                  Support With Surveys →
 
-                </Link>
 
 
 
-                <ShareButton
 
-                  url={`/f/${fundraiser.slug}`}
 
-                  title={fundraiser.title}
+<div className="px-8 pb-8">
 
-                />
 
+<div className="bg-purple-50 rounded-2xl p-8 text-center">
 
 
-              </div>
+<Image
 
+src="/pollacle.png"
 
-            </div>
+alt="Pollacle mascot"
 
+width={150}
 
-          </div>
+height={150}
 
+className="mx-auto"
 
+/>
 
 
 
 
 
+<h2 className="text-3xl font-bold text-purple-700 mt-4">
 
-          <div className="grid md:grid-cols-4 gap-5 px-8 pb-8">
+Support this fundraiser without donating
 
+</h2>
 
 
-            <div className="bg-gray-50 rounded-xl p-5 text-center">
 
 
-              <div className="text-3xl font-bold text-purple-700">
+<p className="mt-3 text-gray-600">
 
-                {fundraiser.views}
+Complete surveys from trusted research partners.
 
-              </div>
+Your survey participation creates real support.
 
+</p>
 
-              <p className="text-gray-500">
 
-                Views
 
-              </p>
 
 
-            </div>
+<div className="mt-8 flex flex-col md:flex-row gap-4 justify-center">
 
 
 
+<Link
 
+href={`/survey?fundraiser=${fundraiser.slug}`}
 
-            <div className="bg-gray-50 rounded-xl p-5 text-center">
+className="bg-purple-700 hover:bg-purple-800 text-white text-xl font-bold px-10 py-5 rounded-2xl"
 
+>
 
-              <div className="text-3xl font-bold text-purple-700">
+Support With Surveys →
 
-                {fundraiser.surveySupporters}
+</Link>
 
-              </div>
 
 
-              <p className="text-gray-500">
 
-                Supporters
+<ShareButton
 
-              </p>
+url={`/f/${fundraiser.slug}`}
 
+title={fundraiser.title}
 
-            </div>
+/>
 
 
 
+</div>
 
 
-            <div className="bg-gray-50 rounded-xl p-5 text-center">
+</div>
 
 
-              <div className="text-3xl font-bold text-green-600">
+</div>
 
-                ${fundraiser.amountRaised.toFixed(2)}
 
-              </div>
 
 
-              <p className="text-gray-500">
 
-                Raised
 
-              </p>
 
 
-            </div>
 
+<div className="grid md:grid-cols-4 gap-5 px-8 pb-8">
 
 
+<div className="bg-gray-50 rounded-xl p-5 text-center">
 
+<div className="text-3xl font-bold text-purple-700">
 
-            <div className="bg-gray-50 rounded-xl p-5 text-center">
+{fundraiser.views}
 
+</div>
 
-              <div className="text-3xl font-bold text-purple-700">
+<p className="text-gray-500">
 
-                {fundraiser.surveyCompletions.length}
+Views
 
-              </div>
+</p>
 
+</div>
 
-              <p className="text-gray-500">
 
-                Surveys
 
-              </p>
 
 
-            </div>
+<div className="bg-gray-50 rounded-xl p-5 text-center">
 
+<div className="text-3xl font-bold text-purple-700">
 
+{fundraiser.surveySupporters}
 
-          </div>
+</div>
 
+<p className="text-gray-500">
 
+Supporters
 
+</p>
 
+</div>
 
-          <div className="border-t p-8">
 
 
-            <h2 className="text-2xl font-bold mb-5">
 
-              Recent Support Activity
 
-            </h2>
+<div className="bg-gray-50 rounded-xl p-5 text-center">
 
+<div className="text-3xl font-bold text-green-600">
 
+${fundraiser.amountRaised.toFixed(2)}
 
+</div>
 
-            {fundraiser.surveyCompletions.length === 0 ? (
 
-              <p className="text-gray-500">
+<p className="text-gray-500">
 
-                Be the first supporter!
+Raised
 
-              </p>
+</p>
 
+</div>
 
-            ) : (
 
 
-              <div className="space-y-4">
 
 
-                {fundraiser.surveyCompletions.map((item)=>(
 
+<div className="bg-gray-50 rounded-xl p-5 text-center">
 
-                  <div
 
-                    key={item.id}
+<div className="text-3xl font-bold text-purple-700">
 
-                    className="bg-purple-50 rounded-xl p-5 flex justify-between"
+{fundraiser.surveyCompletions.length}
 
-                  >
+</div>
 
-                    <span>
 
-                      🐙 Survey completed
+<p className="text-gray-500">
 
-                    </span>
+Recent Surveys
 
+</p>
 
-                    <strong className="text-green-600">
 
-                      +${item.rewardAmount.toFixed(2)}
+</div>
 
-                    </strong>
 
+</div>
 
-                  </div>
 
 
-                ))}
 
 
-              </div>
 
 
-            )}
 
 
-          </div>
+<div className="border-t p-8">
 
 
+<h2 className="text-2xl font-bold mb-5">
 
+Recent Support Activity
 
+</h2>
 
 
-          <div className="border-t p-8 text-center text-gray-500">
 
 
-            <p>
-              Pollacle helps communities raise support through survey participation.
-            </p>
+{
+fundraiser.surveyCompletions.length === 0
 
+?
 
-            <p className="mt-2">
-              Survey rewards, not donations, fund campaigns.
-            </p>
+<p className="text-gray-500">
 
+Be the first supporter!
 
-          </div>
+</p>
 
 
+:
 
-        </div>
 
+<div className="space-y-4">
 
-      </div>
 
+{
+fundraiser.surveyCompletions.map((item)=>(
 
-    </main>
 
-  );
+<div
+
+key={item.id}
+
+className="bg-purple-50 rounded-xl p-5 flex justify-between"
+
+>
+
+
+<span>
+
+🐙 Survey completed
+
+</span>
+
+
+
+<strong className="text-green-600">
+
++${item.rewardAmount.toFixed(2)}
+
+</strong>
+
+
+</div>
+
+
+))
+
+}
+
+
+</div>
+
+
+}
+
+
+</div>
+
+
+
+
+
+
+
+
+<div className="border-t p-8 text-center text-gray-500">
+
+
+<p>
+
+Pollacle helps communities raise support through survey participation.
+
+</p>
+
+
+<p className="mt-2">
+
+Survey rewards, not donations, fund campaigns.
+
+</p>
+
+
+</div>
+
+
+
+
+
+</div>
+
+
+</div>
+
+
+</main>
+
+);
+
 
 }

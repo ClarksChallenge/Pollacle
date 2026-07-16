@@ -37,10 +37,10 @@ export default function FeaturedFundraisers() {
 
 
       } catch (error) {
-
-        console.error(error);
+        // Don't leak sensitive details in the UI console; warn for debugging
+        // eslint-disable-next-line no-console
+        console.warn("Failed to load fundraisers", error);
         setFundraisers([]);
-
       } finally {
 
         setLoading(false);

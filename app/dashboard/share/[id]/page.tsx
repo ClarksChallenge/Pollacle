@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import { authOptions } from "@/app/lib/auth";
 import { prisma } from "@/app/lib/prisma";
+import { SITE_URL } from "@/app/lib/config";
 
 import ShareButton from "@/components/ShareButton";
 
@@ -66,8 +67,8 @@ export default async function SharePage({
 
 
 
-  const shareUrl =
-    `${process.env.NEXT_PUBLIC_SITE_URL}/f/${fundraiser.slug}`;
+  const base = SITE_URL.replace(/\/$/, "");
+  const shareUrl = `${base}/f/${fundraiser.slug}`;
 
 
 

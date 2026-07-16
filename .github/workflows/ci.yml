@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Install Playwright deps
+        run: npx playwright install --with-deps
+
+      - name: Run E2E tests
+        env:
+          PLAYWRIGHT_BASE_URL: http://localhost:3000
+        run: |
+          npm run build
+          npm start &
+          # Wait for /api/health to report OK (longer timeout for DB migrations)
+          for i in {1..30}; do
+            if curl -sSf http://localhost:3000/api/health >/dev/null 2>&1; then
+              echo "health ok" && break
+            fi
+            sleep 2
+          done
+          npm run test:e2e
+
+      - name: Fetch secrets from AWS Secrets Manager (optional)
+        if: ${{ secrets.AWS_ACCESS_KEY_ID && secrets.AWS_SECRET_ACCESS_KEY }}
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-region: us-east-1
+
+      - name: Get secret from AWS Secrets Manager into env (optional)
+        if: ${{ secrets.AWS_ACCESS_KEY_ID && secrets.AWS_SECRET_ACCESS_KEY && secrets.AWS_SECRET_ID }}
+        run: |
+          echo "Fetching secret ${{ secrets.AWS_SECRET_ID }}"
+          SECRET_JSON=$(aws secretsmanager get-secret-value --secret-id "${{ secrets.AWS_SECRET_ID }}" --query SecretString --output text)
+          echo "AWS_SECRET_JSON<<EOF" >> $GITHUB_ENV
+          echo "$SECRET_JSON" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Fetch secrets from Vault (optional)
+        if: ${{ secrets.VAULT_ADDR && secrets.VAULT_TOKEN && secrets.VAULT_SECRET_PATH }}
+        run: |
+          echo "Logging into Vault and fetching ${VAULT_SECRET_PATH:-secret/data/myapp}"
+          export VAULT_ADDR="${{ secrets.VAULT_ADDR }}"
+          export VAULT_TOKEN="${{ secrets.VAULT_TOKEN }}"
+          # Requires vault CLI to be available on runner or use curl against Vault API
+          if command -v vault >/dev/null 2>&1; then
+            vault kv get -format=json "${{ secrets.VAULT_SECRET_PATH }}" > vault-secrets.json || true
+            echo "VAULT_SECRET_JSON<<EOF" >> $GITHUB_ENV
+            cat vault-secrets.json >> $GITHUB_ENV
+            echo "EOF" >> $GITHUB_ENV
+          else
+            echo "Vault CLI not available on runner; use curl against Vault API or install vault." >&2
+          fi
+
+  # Extend with deploy job where your secrets manager injects envs
