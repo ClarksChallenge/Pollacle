@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import { authOptions } from "@/app/lib/auth";
 import { prisma } from "@/app/lib/prisma";
+import FounderCharts from '@/components/FounderCharts';
 
 export default async function FounderDashboard() {
   const session = await getServerSession(authOptions as any);
@@ -37,6 +38,34 @@ export default async function FounderDashboard() {
     orderBy: { _count: { referrer: "desc" } },
     take: 10,
   });
+
+  // Build last 30 days time series for completions
+  const start = new Date();
+  start.setDate(start.getDate() - 29);
+  start.setHours(0, 0, 0, 0);
+
+  const completions = await prisma.surveyCompletion.findMany({
+    where: {
+      completedAt: { not: null },
+      completedAt: { gte: start },
+    },
+    select: { completedAt: true },
+  });
+
+  const buckets: Record<string, number> = {};
+  for (let i = 0; i < 30; i++) {
+    const d = new Date(start);
+    d.setDate(start.getDate() + i);
+    const key = d.toISOString().slice(0, 10);
+    buckets[key] = 0;
+  }
+
+  for (const c of completions) {
+    const key = c.completedAt!.toISOString().slice(0, 10);
+    if (buckets[key] !== undefined) buckets[key] += 1;
+  }
+
+  const timeSeries = Object.keys(buckets).sort().map((k) => ({ date: k, count: buckets[k] }));
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -89,18 +118,7 @@ export default async function FounderDashboard() {
               ))}
             </ul>
           </div>
-
-          <div className="bg-white rounded-xl shadow p-6">
-            <h3 className="font-semibold mb-4">Top Referrers</h3>
-            <ul className="space-y-2">
-              {topReferrers.map((r) => (
-                <li key={r.referrer} className="flex items-center justify-between">
-                  <div className="truncate">{r.referrer || "Direct"}</div>
-                  <div className="text-sm text-gray-600">{r._count.referrer}</div>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <FounderCharts timeSeries={timeSeries} topReferrers={topReferrers} />
         </div>
       </div>
     </main>
