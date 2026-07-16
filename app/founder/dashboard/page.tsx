@@ -67,6 +67,53 @@ export default async function FounderDashboard() {
 
   const timeSeries = Object.keys(buckets).sort().map((k) => ({ date: k, count: buckets[k] }));
 
+  // Conversion & revenue metrics for last 30 days
+  const sessionsStarted = await prisma.surveySession.count({ where: { startedAt: { gte: start } } });
+  const completionsCount = await prisma.surveyCompletion.count({ where: { completedAt: { gte: start } } });
+
+  const rewardsAgg = await prisma.surveyCompletion.aggregate({
+    where: { completedAt: { gte: start } },
+    _sum: { rewardAmount: true },
+  });
+
+  const totalRewards = rewardsAgg._sum.rewardAmount ?? 0;
+  const conversionRate = sessionsStarted ? +(completionsCount / sessionsStarted).toFixed(3) : 0;
+
+  // UTM source breakdown
+  const utmSources = await prisma.surveySession.groupBy({
+    by: ["utmSource"],
+    _count: { utmSource: true },
+    where: { startedAt: { gte: start } },
+    orderBy: { _count: { utmSource: "desc" } },
+    take: 20,
+  });
+
+  // Per-fundraiser completions & revenue in period
+  const compsByFundraiser = await prisma.surveyCompletion.groupBy({
+    by: ["fundraiserId"],
+    where: { completedAt: { gte: start } },
+    _count: { _all: true },
+    _sum: { rewardAmount: true },
+    orderBy: { _count: { _all: "desc" } },
+    take: 20,
+  });
+
+  const fundraiserIds = compsByFundraiser.map((c) => c.fundraiserId);
+  const fundInfos = await prisma.fundraiser.findMany({ where: { id: { in: fundraiserIds } } });
+
+  const perFund = compsByFundraiser.map((c) => {
+    const info = fundInfos.find((f) => f.id === c.fundraiserId);
+    return {
+      fundraiserId: c.fundraiserId,
+      title: info?.title || 'Unknown',
+      slug: info?.slug || '',
+      completions: c._count._all,
+      revenue: c._sum.rewardAmount ?? 0,
+      views: info?.views ?? 0,
+      totalRaised: info?.amountRaised ?? 0,
+    };
+  });
+
   return (
     <main className="min-h-screen bg-gray-50">
       <div className="max-w-6xl mx-auto px-6 py-12">
@@ -100,6 +147,28 @@ export default async function FounderDashboard() {
           </div>
         </div>
 
+        <div className="grid grid-cols-4 gap-6 mb-8">
+          <div className="bg-white p-6 rounded-xl shadow">
+            <div className="text-sm text-gray-500">Sessions Started (30d)</div>
+            <div className="text-2xl font-bold mt-2">{sessionsStarted}</div>
+          </div>
+
+          <div className="bg-white p-6 rounded-xl shadow">
+            <div className="text-sm text-gray-500">Completions (30d)</div>
+            <div className="text-2xl font-bold text-purple-700 mt-2">{completionsCount}</div>
+          </div>
+
+          <div className="bg-white p-6 rounded-xl shadow">
+            <div className="text-sm text-gray-500">Conversion Rate</div>
+            <div className="text-2xl font-bold text-blue-600 mt-2">{(conversionRate * 100).toFixed(1)}%</div>
+          </div>
+
+          <div className="bg-white p-6 rounded-xl shadow">
+            <div className="text-sm text-gray-500">Rewards Paid (30d)</div>
+            <div className="text-2xl font-bold text-green-600 mt-2">${totalRewards.toFixed(2)}</div>
+          </div>
+        </div>
+
         <div className="grid md:grid-cols-2 gap-6">
           <div className="bg-white rounded-xl shadow p-6">
             <h3 className="font-semibold mb-4">Top Fundraisers</h3>
@@ -118,7 +187,49 @@ export default async function FounderDashboard() {
               ))}
             </ul>
           </div>
-          <FounderCharts timeSeries={timeSeries} topReferrers={topReferrers} />
+          <div>
+            <FounderCharts timeSeries={timeSeries} topReferrers={topReferrers} />
+
+            <div className="bg-white rounded-xl shadow p-6 mt-6">
+              <h4 className="font-semibold mb-3">Top UTM Sources (30d)</h4>
+              <ul className="space-y-2">
+                {utmSources.map((u) => (
+                  <li key={u.utmSource || 'direct'} className="flex justify-between">
+                    <div className="truncate">{u.utmSource || 'Direct'}</div>
+                    <div className="text-sm text-gray-600">{u._count.utmSource}</div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-xl shadow p-6 mt-6">
+          <h3 className="font-semibold mb-4">Per-Fundraiser (30d)</h3>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead>
+                <tr className="text-sm text-gray-500">
+                  <th className="py-2">Fundraiser</th>
+                  <th className="py-2">Completions</th>
+                  <th className="py-2">Revenue</th>
+                  <th className="py-2">Views</th>
+                  <th className="py-2">Total Raised</th>
+                </tr>
+              </thead>
+              <tbody>
+                {perFund.map((p) => (
+                  <tr key={p.fundraiserId} className="border-t">
+                    <td className="py-3">{p.title}</td>
+                    <td className="py-3">{p.completions}</td>
+                    <td className="py-3">${p.revenue.toFixed(2)}</td>
+                    <td className="py-3">{p.views}</td>
+                    <td className="py-3">${p.totalRaised.toFixed(2)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </main>
