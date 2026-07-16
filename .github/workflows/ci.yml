@@ -29,7 +29,7 @@ jobs:
           PLAYWRIGHT_BASE_URL: http://localhost:3000
         run: |
           npm run build
-          npm start &
+          npm run start:prod &
           # Wait for /api/health to report OK (longer timeout for DB migrations)
           for i in {1..30}; do
             if curl -sSf http://localhost:3000/api/health >/dev/null 2>&1; then

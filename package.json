@@ -6,6 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "start:prod": "node ./scripts/init-sentry.js && next start",
+    "seed:founder": "node ./scripts/seed-founder.js",
     "test:e2e": "playwright test",
     "ci:tests": "npx playwright install --with-deps && npx playwright test"
   },
