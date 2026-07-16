@@ -9,6 +9,31 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - name: Install dependencies
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm ci
+
+      - name: Run DB migrations (optional)
+        if: ${{ secrets.DATABASE_URL }}
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: npx prisma migrate deploy --schema=prisma/schema.prisma
+
+      - name: Seed founder (optional)
+        if: ${{ secrets.DATABASE_URL && secrets.FOUNDER_EMAIL }}
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          FOUNDER_EMAIL: ${{ secrets.FOUNDER_EMAIL }}
+          FOUNDER_NAME: ${{ secrets.FOUNDER_NAME }}
+          FOUNDER_FUNDRAISER_TITLE: ${{ secrets.FOUNDER_FUNDRAISER_TITLE }}
+        run: npm run seed:founder
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
 
@@ -27,5 +52,16 @@ jobs:
         with:
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/pollacle:latest
+
+      - name: Optional: Trigger provider deployment
+        if: ${{ secrets.DEPLOY_WEBHOOK_URL }}
+        run: |
+          echo "Triggering provider deployment via webhook"
+          curl -X POST -H "Content-Type: application/json" -d '{"ref":"main"}' "${{ secrets.DEPLOY_WEBHOOK_URL }}" || true
+
+      - name: Provider-specific notes (DNS/TLS)
+        run: |
+          echo "This workflow builds and pushes the Docker image to GHCR."
+          echo "Add provider-specific deploy steps here (Cloud Run, ECS, Render, Fly.io, etc.)."
 
       # Extend with deployment steps (Kubernetes, Cloud Run, etc.)
