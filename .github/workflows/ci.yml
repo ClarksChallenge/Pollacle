@@ -21,22 +21,45 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Run DB migrations (CI)
+        if: ${{ secrets.DATABASE_URL }}
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          echo "Running prisma migrate deploy"
+          npx prisma migrate deploy --schema=prisma/schema.prisma
+
+      - name: Seed founder (CI)
+        if: ${{ secrets.FOUNDER_EMAIL && secrets.DATABASE_URL }}
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          FOUNDER_EMAIL: ${{ secrets.FOUNDER_EMAIL }}
+        run: |
+          echo "Seeding founder: $FOUNDER_EMAIL"
+          FOUNDER_EMAIL="$FOUNDER_EMAIL" npm run seed:founder || true
+
       - name: Install Playwright deps
         run: npx playwright install --with-deps
 
       - name: Run E2E tests
         env:
           PLAYWRIGHT_BASE_URL: http://localhost:3000
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          FOUNDER_EMAIL: ${{ secrets.FOUNDER_EMAIL }}
+          # enable impersonation only for this CI job
+          ALLOW_DEV_IMPERSONATION: '1'
         run: |
           npm run build
+          # start production server with init-sentry (safe if SENTRY_DSN missing)
           npm run start:prod &
           # Wait for /api/health to report OK (longer timeout for DB migrations)
-          for i in {1..30}; do
+          for i in {1..60}; do
             if curl -sSf http://localhost:3000/api/health >/dev/null 2>&1; then
               echo "health ok" && break
             fi
             sleep 2
           done
+          # Run playwright tests (impostor flow uses /api/dev/impersonate)
           npm run test:e2e
 
       - name: Fetch secrets from AWS Secrets Manager (optional)
