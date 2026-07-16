@@ -1,0 +1,16 @@
+[
+  { "pattern": "facebook.com", "channel": "Facebook" },
+  { "pattern": "fb.", "channel": "Facebook" },
+  { "pattern": "twitter.com", "channel": "Twitter/X" },
+  { "pattern": "x.com", "channel": "Twitter/X" },
+  { "pattern": "t.co", "channel": "Twitter/X" },
+  { "pattern": "instagram.com", "channel": "Instagram" },
+  { "pattern": "linkedin.com", "channel": "LinkedIn" },
+  { "pattern": "reddit.com", "channel": "Reddit" },
+  { "pattern": "youtube.com", "channel": "YouTube" },
+  { "pattern": "youtu.be", "channel": "YouTube" },
+  { "pattern": "tiktok", "channel": "TikTok" },
+  { "pattern": "pinterest", "channel": "Pinterest" },
+  { "pattern": "google", "channel": "Search/Google" },
+  { "pattern": "bing.com", "channel": "Search/Bing" }
+]

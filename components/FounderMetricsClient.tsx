@@ -33,6 +33,44 @@ export default function FounderMetricsClient({ initialData, defaultStart, defaul
       <div>
         <FounderCharts timeSeries={data.timeSeries || []} topReferrers={data.topReferrers || []} />
 
+        <div className="flex gap-2 mt-4">
+          <button
+            onClick={async ()=>{
+              const url = `/api/founder/metrics-csv?type=perFund&start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`;
+              try{
+                const res = await fetch(url, { credentials: 'same-origin' });
+                if (!res.ok) throw new Error('export failed');
+                const blob = await res.blob();
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = `per-fundraiser-${start || 'start'}-${end || 'end'}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+              }catch(e){ console.error(e); }
+            }}
+            className="bg-gray-100 px-3 py-1 rounded"
+          >Download per-fund CSV</button>
+
+          <button
+            onClick={async ()=>{
+              const url = `/api/founder/metrics-csv?type=utm&start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`;
+              try{
+                const res = await fetch(url, { credentials: 'same-origin' });
+                if (!res.ok) throw new Error('export failed');
+                const blob = await res.blob();
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = `utm-${start || 'start'}-${end || 'end'}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+              }catch(e){ console.error(e); }
+            }}
+            className="bg-gray-100 px-3 py-1 rounded"
+          >Download UTM CSV</button>
+        </div>
+
         <div className="bg-white rounded-xl shadow p-4 mt-4">
           <div className="grid grid-cols-4 gap-4">
             <div>
