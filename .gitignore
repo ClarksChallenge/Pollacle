@@ -53,4 +53,7 @@ yarn-error.log*
 next-env.d.ts
 
 /app/generated/prisma
-prisma/**/*.db
+prisma/
+**/*.dbapp/api/cpx/callback/route-backup.ts
+
+prisma/prisma/
