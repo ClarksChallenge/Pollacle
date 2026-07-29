@@ -12,7 +12,7 @@ function csvEscape(s: any) {
 }
 
 export async function GET(req: Request) {
-  const session = await getServerSession(authOptions as any);
+  const session = await getServerSession(authOptions);
   if (!session?.user?.email || session.user.email !== process.env.FOUNDER_EMAIL) {
     return NextResponse.json({ error: 'forbidden' }, { status: 403 });
   }
@@ -29,7 +29,7 @@ export async function GET(req: Request) {
       where: { completedAt: { gte: start, lte: end } },
       _count: { _all: true },
       _sum: { rewardAmount: true },
-      orderBy: { _count: { _all: 'desc' } },
+      orderBy: { _count: { fundraiserId: 'desc' } },
       take: 100,
     });
 

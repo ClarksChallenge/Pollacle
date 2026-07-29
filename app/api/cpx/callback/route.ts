@@ -1,49 +1,84 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
-import { safeCompare, logServerError } from "@/app/lib/server-helpers";
+import crypto from "crypto";
+import { logServerError } from "@/app/lib/server-helpers";
+
+
+export async function GET(req: Request) {
+  return handleCPX(req);
+}
 
 
 export async function POST(req: Request) {
+  return handleCPX(req);
+}
+
+
+
+async function handleCPX(req: Request) {
 
   try {
 
+    const url = new URL(req.url);
 
-    const body = await req.json();
 
-
-    const {
-      sessionId,
-      reward,
-      secret,
-      transactionId,
-    } = body;
+    const status = url.searchParams.get("status");
+    const transactionId = url.searchParams.get("trans_id");
+    const sessionId = url.searchParams.get("user_id");
+    const reward = url.searchParams.get("amount_usd");
+    const hash = url.searchParams.get("hash");
 
 
 
-    // =====================================
-    // VERIFY CPX CALLBACK SECRET
-    // =====================================
+    if (!transactionId || !sessionId) {
 
-    if (!safeCompare(secret, process.env.CPX_CALLBACK_SECRET)) {
-      return NextResponse.json({ error: "Unauthorized CPX callback" }, { status: 401 });
+      return NextResponse.json(
+        {
+          error: "Missing transaction ID or session ID"
+        },
+        {
+          status:400
+        }
+      );
+
     }
 
 
 
+    const secret = process.env.CPX_CALLBACK_SECRET;
 
 
-    // =====================================
-    // VALIDATE SESSION ID
-    // =====================================
-
-    if (!sessionId) {
+    if (!secret) {
 
       return NextResponse.json(
         {
-          error: "Missing sessionId",
+          error:"Missing CPX callback secret"
         },
         {
-          status: 400,
+          status:500
+        }
+      );
+
+    }
+
+
+
+    // Verify CPX hash
+    const expectedHash = crypto
+      .createHash("md5")
+      .update(`${transactionId}-${secret}`)
+      .digest("hex");
+
+
+
+    if (hash && hash !== expectedHash) {
+
+      return NextResponse.json(
+        {
+          error:"Invalid CPX hash"
+        },
+        {
+          status:401
         }
       );
 
@@ -52,25 +87,13 @@ export async function POST(req: Request) {
 
 
 
+    const session = await prisma.surveySession.findUnique({
 
-    // =====================================
-    // FIND SURVEY SESSION
-    // =====================================
+      where:{
+        id:sessionId
+      }
 
-    const session =
-      await prisma.surveySession.findUnique({
-
-        where: {
-          id: sessionId,
-        },
-
-        include: {
-          fundraiser: true,
-        },
-
-      });
-
-
+    });
 
 
 
@@ -78,10 +101,10 @@ export async function POST(req: Request) {
 
       return NextResponse.json(
         {
-          error: "Survey session not found",
+          error:"Survey session not found"
         },
         {
-          status: 404,
+          status:404
         }
       );
 
@@ -89,21 +112,28 @@ export async function POST(req: Request) {
 
 
 
+    // Handle cancelled surveys
 
+    if(status === "2") {
 
-    // =====================================
-    // PREVENT DOUBLE CREDIT
-    // =====================================
+      await prisma.surveySession.update({
 
-    if (
-      session.status === "COMPLETED"
-    ) {
+        where:{
+          id:session.id
+        },
+
+        data:{
+          status:"CANCELLED"
+        }
+
+      });
+
 
       return NextResponse.json({
 
-        success: true,
+        success:true,
 
-        message: "Survey already credited",
+        message:"Survey cancelled"
 
       });
 
@@ -113,26 +143,18 @@ export async function POST(req: Request) {
 
 
 
-    // =====================================
-    // VALIDATE REWARD
-    // =====================================
-
-    const rewardAmount =
-      Number(reward);
+    const rewardAmount = Number(reward);
 
 
 
-    if (
-      !rewardAmount ||
-      rewardAmount <= 0
-    ) {
+    if(!Number.isFinite(rewardAmount) || rewardAmount <= 0){
 
       return NextResponse.json(
         {
-          error: "Invalid reward amount",
+          error:"Invalid reward"
         },
         {
-          status: 400,
+          status:400
         }
       );
 
@@ -141,104 +163,89 @@ export async function POST(req: Request) {
 
 
 
-
-    // =====================================
-    // MARK SESSION COMPLETE
-    // =====================================
-
-    await prisma.surveySession.update({
-
-      where: {
-        id: session.id,
-      },
-
-      data: {
-
-        status: "COMPLETED",
-
-        completedAt: new Date(),
-
-      },
-
-    });
+    const credited = await prisma.$transaction(async(tx)=>{
 
 
+      const claimed = await tx.surveySession.updateMany({
 
-
-
-
-    // =====================================
-    // SAVE SURVEY COMPLETION
-    // =====================================
-
-    await prisma.surveyCompletion.create({
-
-      data: {
-
-        fundraiserId:
-          session.fundraiserId,
-
-
-        provider:
-          "CPX Research",
-
-
-        rewardAmount,
-
-
-        transactionId:
-          transactionId || null,
-
-
-        status:
-          "COMPLETED",
-
-
-        completedAt:
-          new Date(),
-
-      },
-
-    });
-
-
-
-
-
-
-
-    // =====================================
-    // CREDIT POLLACLE FUNDRAISER
-    // =====================================
-
-    await prisma.fundraiser.update({
-
-      where: {
-
-        id: session.fundraiserId,
-
-      },
-
-      data: {
-
-        amountRaised: {
-
-          increment: rewardAmount,
-
+        where:{
+          id:session.id,
+          status:"STARTED"
         },
 
+        data:{
 
-        surveySupporters: {
+          status:"COMPLETED",
 
-          increment: 1,
+          completedAt:new Date()
 
+        }
+
+      });
+
+
+
+      if(claimed.count === 0){
+
+        return false;
+
+      }
+
+
+
+
+
+      await tx.surveyCompletion.create({
+
+        data:{
+
+          fundraiserId:session.fundraiserId,
+
+          provider:"CPX Research",
+
+          transactionId,
+
+          rewardAmount,
+
+          status:"COMPLETED",
+
+          completedAt:new Date()
+
+        }
+
+      });
+
+
+
+
+
+
+      await tx.fundraiser.update({
+
+        where:{
+          id:session.fundraiserId
         },
 
-      },
+        data:{
+
+          amountRaised:{
+            increment:rewardAmount
+          },
+
+          surveySupporters:{
+            increment:1
+          }
+
+        }
+
+      });
+
+
+
+      return true;
+
 
     });
-
-
 
 
 
@@ -246,43 +253,30 @@ export async function POST(req: Request) {
 
     return NextResponse.json({
 
-      success: true,
+      success:true,
 
-      message:
-        "Survey credited successfully",
+      message: credited
+        ? "Survey credited"
+        : "Already credited",
 
-
-      fundraiser:
-        session.fundraiser.title,
-
-
-      rewardAmount,
-
+      rewardAmount
 
     });
 
 
 
-
-
-  } catch(error) {
-
+  } catch(error){
 
     logServerError("cpx-callback", error);
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
-
 
 
     return NextResponse.json(
-
       {
-        error: "Server error",
+        error:"Server error"
       },
-
       {
-        status: 500,
+        status:500
       }
-
     );
 
   }

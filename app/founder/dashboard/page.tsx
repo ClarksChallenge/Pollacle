@@ -8,7 +8,7 @@ import FounderCharts from '@/components/FounderCharts';
 import FounderMetricsClient from '@/components/FounderMetricsClient';
 
 export default async function FounderDashboard() {
-  const session = await getServerSession(authOptions as any);
+  const session = await getServerSession(authOptions);
 
   if (!session?.user?.email) {
     redirect("/login");
@@ -47,8 +47,7 @@ export default async function FounderDashboard() {
 
   const completions = await prisma.surveyCompletion.findMany({
     where: {
-      completedAt: { not: null },
-      completedAt: { gte: start },
+      completedAt: { not: null, gte: start },
     },
     select: { completedAt: true },
   });
@@ -95,7 +94,7 @@ export default async function FounderDashboard() {
     where: { completedAt: { gte: start } },
     _count: { _all: true },
     _sum: { rewardAmount: true },
-    orderBy: { _count: { _all: "desc" } },
+    orderBy: { _count: { fundraiserId: "desc" } },
     take: 20,
   });
 

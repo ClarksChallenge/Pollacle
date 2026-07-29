@@ -14,7 +14,7 @@ export default function CreateFundraiserPage() {
         <div className="flex justify-center mb-6">
 
           <div className="text-7xl">
-            🐙
+            
           </div>
 
         </div>
@@ -46,7 +46,7 @@ export default function CreateFundraiserPage() {
 
           <h2 className="font-bold text-purple-700 text-xl">
 
-            🐙 Single-Founder Launch
+             Single-Founder Launch
 
           </h2>
 

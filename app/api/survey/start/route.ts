@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
 import { logServerError } from "@/app/lib/server-helpers";
+import { buildCpxLaunchUrl, CpxConfigurationError } from "@/app/lib/cpx";
 
 export async function POST(req: Request) {
   try {
@@ -77,9 +78,7 @@ export async function POST(req: Request) {
       },
     });
 
-    // Placeholder CPX URL
-    // Replace with the real CPX launch URL after approval
-    const surveyUrl = `https://offers.cpx-research.com/?sid=${session.id}`;
+    const surveyUrl = buildCpxLaunchUrl(session.id);
 
     return NextResponse.json({
       success: true,
@@ -95,6 +94,13 @@ export async function POST(req: Request) {
       surveyUrl,
     });
   } catch (error) {
+    if (error instanceof CpxConfigurationError) {
+      logServerError("survey-start", error);
+      return NextResponse.json(
+        { error: "Surveys are not configured yet. Please try again later." },
+        { status: 503 }
+      );
+    }
     logServerError("survey-start", error);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
