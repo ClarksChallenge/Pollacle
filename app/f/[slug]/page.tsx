@@ -145,7 +145,7 @@ export default async function FundraiserPage({
 
 
 
-  if(!fundraiser){
+  if(!fundraiser || fundraiser.status !== "ACTIVE"){
 
     notFound();
 

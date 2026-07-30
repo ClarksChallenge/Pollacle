@@ -1,10 +1,12 @@
 import { getServerSession } from "next-auth";
 import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
+import { headers } from "next/headers";
 
 import { authOptions } from "@/app/lib/auth";
 import { prisma } from "@/app/lib/prisma";
 import { SITE_URL } from "@/app/lib/config";
+import { buildAbsoluteShareUrl } from "@/app/lib/share-url";
 
 import ShareButton from "@/components/ShareButton";
 
@@ -41,7 +43,10 @@ export default async function SharePage({
     redirect("/login");
   }
 
-
+  const founderEmail = process.env.FOUNDER_EMAIL;
+  if (!founderEmail || session.user.email !== founderEmail) {
+    redirect("/login");
+  }
 
 
   const fundraiser = await prisma.fundraiser.findFirst({
@@ -67,8 +72,15 @@ export default async function SharePage({
 
 
 
-  const base = SITE_URL.replace(/\/$/, "");
-  const shareUrl = `${base}/f/${fundraiser.slug}`;
+  const requestHeaders = headers();
+  const forwardedProto = requestHeaders.get("x-forwarded-proto") ?? "https";
+  const forwardedHost = requestHeaders.get("x-forwarded-host") ?? requestHeaders.get("host");
+
+  const origin = forwardedHost
+    ? `${forwardedProto}://${forwardedHost}`
+    : (SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXTAUTH_URL || "http://localhost:3000");
+
+  const shareUrl = buildAbsoluteShareUrl(`/f/${fundraiser.slug}`, origin);
 
 
 

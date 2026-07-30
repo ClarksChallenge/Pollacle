@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { resolveShareUrl } from "@/app/lib/share-url";
 
 export default function ShareButton({
   url,
@@ -11,6 +12,8 @@ export default function ShareButton({
 }) {
 
   const [copied, setCopied] = useState(false);
+  const origin = typeof window !== "undefined" ? window.location.origin : "";
+  const shareUrl = resolveShareUrl(url, origin || undefined);
 
 
   async function share() {
@@ -26,7 +29,7 @@ export default function ShareButton({
 
           text: `Support ${title || "this fundraiser"} on Pollacle`,
 
-          url,
+          url: shareUrl,
 
         });
 
@@ -42,7 +45,7 @@ export default function ShareButton({
 
 
 
-    await navigator.clipboard.writeText(url);
+    await navigator.clipboard.writeText(shareUrl);
 
 
     setCopied(true);
