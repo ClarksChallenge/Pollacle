@@ -1,7 +1,16 @@
+// Define the custom error class that your API route is trying to import
+export class CpxConfigurationError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "CpxConfigurationError";
+  }
+}
+
 export function buildCpxLaunchUrl(fundraiserId: string, userId: string) {
   const appId = process.env.CPX_APP_ID;
   if (!appId) {
-    throw new Error("Missing CPX_APP_ID in your environment variables.");
+    // Use the custom error class here to match your API route expectations
+    throw new CpxConfigurationError("Missing CPX_APP_ID in your environment variables.");
   }
 
   const url = new URL("https://cpx-research.com");
@@ -10,3 +19,4 @@ export function buildCpxLaunchUrl(fundraiserId: string, userId: string) {
   url.searchParams.set("subid_1", fundraiserId);
 
   return url.toString();
+}
