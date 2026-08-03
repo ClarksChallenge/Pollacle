@@ -33,7 +33,7 @@ async function main() {
 
       slug: "help-launch-pollacle",
 
-      title: "Help Launch Pollacle 🐙",
+      title: "Help Launch Pollacle",
 
       story:
         "Pollacle is changing the way communities raise support. Instead of asking people for donations, supporters complete surveys and turn their time into real impact. Every completed survey helps power the Pollacle mission.",

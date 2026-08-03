@@ -12,7 +12,7 @@ export default function Navbar() {
           href="/"
           className="text-2xl font-bold text-purple-700"
         >
-          🐙 Pollacle
+          Pollacle
         </Link>
 
 

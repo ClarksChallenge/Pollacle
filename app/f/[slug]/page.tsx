@@ -231,7 +231,7 @@ className="text-xl font-bold text-purple-700"
 
 >
 
-🐙 Pollacle
+ Pollacle
 
 </Link>
 
@@ -597,7 +597,7 @@ className="bg-purple-50 rounded-xl p-5 flex justify-between"
 
 <span>
 
-🐙 Survey completed
+ Survey completed
 
 </span>
 

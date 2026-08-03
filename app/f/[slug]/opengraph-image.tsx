@@ -136,7 +136,7 @@ export default async function Image({
 
         >
 
-          🐙 Pollacle
+           Pollacle
 
         </div>
 

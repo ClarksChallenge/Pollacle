@@ -60,7 +60,7 @@ export default async function AdminPage() {
 
 
         <h1 className="text-5xl font-bold text-purple-700">
-          🐙 Pollacle Founder Admin
+           Pollacle Founder Admin
         </h1>
 
 
