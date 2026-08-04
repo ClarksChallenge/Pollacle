@@ -8,9 +8,7 @@ import { notFound } from "next/navigation";
 import ShareButton from "@/components/ShareButton";
 import SupportButton from "@/components/SupportButton";
 
-
-// SINGLE FOUNDER LAUNCH MODE
-// Always show live fundraiser data
+// Public fundraiser launch page
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
@@ -146,13 +144,10 @@ export default async function FundraiserPage({
 
 
 
-  if(!fundraiser || fundraiser.status !== "ACTIVE"){
-
+  if (!fundraiser || fundraiser.status !== "ACTIVE") {
     notFound();
-
   }
 
-  // Enforce single-founder launch lock: only allow founder fundraisers
   const founderEmail = process.env.FOUNDER_EMAIL;
   if (!founderEmail) {
     notFound();
@@ -163,12 +158,7 @@ export default async function FundraiserPage({
     notFound();
   }
 
-
-
-
-
   // TRACK PUBLIC VIEWS
-
   await prisma.fundraiser.update({
 
     where:{
@@ -414,37 +404,13 @@ Your survey participation creates real support.
 
 
 <div className="mt-8 flex flex-col md:flex-row gap-4 justify-center">
-
-
-
-<Link
-
-href={`/survey?fundraiser=${fundraiser.slug}`}
-
-className="bg-purple-700 hover:bg-purple-800 text-white text-xl font-bold px-10 py-5 rounded-2xl"
-
->
-
-Support With Surveys →
-
 <SupportButton fundraiserSlug={fundraiser.slug} />
 
-
-
-
-
 <ShareButton
-
 url={`/f/${fundraiser.slug}`}
-
 title={fundraiser.title}
-
 />
-
-
-
 </div>
-
 
 </div>
 

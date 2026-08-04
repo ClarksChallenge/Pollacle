@@ -3,18 +3,22 @@ import Image from "next/image";
 import { prisma } from "@/app/lib/prisma";
 
 export default async function FundraisersPage() {
+  const founderEmail = process.env.FOUNDER_EMAIL;
+  const founder = founderEmail
+    ? await prisma.user.findUnique({ where: { email: founderEmail } })
+    : null;
 
-  const fundraisers = await prisma.fundraiser.findMany({
-
-    where: {
-      status: "ACTIVE",
-    },
-
-    orderBy: {
-      createdAt: "desc",
-    },
-
-  });
+  const fundraisers = founder
+    ? await prisma.fundraiser.findMany({
+        where: {
+          status: "ACTIVE",
+          userId: founder.id,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      })
+    : [];
 
 
   return (

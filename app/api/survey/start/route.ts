@@ -42,7 +42,7 @@ export async function POST(req: Request) {
       },
     });
 
-    if (!fundraiser) {
+    if (!fundraiser || fundraiser.status !== "ACTIVE") {
       return NextResponse.json({ error: "Fundraiser not found" }, { status: 404 });
     }
 
