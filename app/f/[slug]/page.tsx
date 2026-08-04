@@ -6,6 +6,7 @@ import { prisma } from "@/app/lib/prisma";
 import { notFound } from "next/navigation";
 
 import ShareButton from "@/components/ShareButton";
+import SupportButton from "@/components/SupportButton";
 
 
 // SINGLE FOUNDER LAUNCH MODE
@@ -426,7 +427,8 @@ className="bg-purple-700 hover:bg-purple-800 text-white text-xl font-bold px-10 
 
 Support With Surveys →
 
-</Link>
+<SupportButton fundraiserSlug={fundraiser.slug} />
+
 
 
 

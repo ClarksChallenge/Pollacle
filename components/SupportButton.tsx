@@ -3,33 +3,52 @@
 import { useState } from 'react';
 
 interface SupportButtonProps {
-  fundraiserId: string; // The ID of the user getting the credit
+  fundraiserSlug: string; // Changed from ID to Slug to match your API requirements
 }
 
-export default function SupportButton({ fundraiserId }: SupportButtonProps) {
+export default function SupportButton({ fundraiserSlug }: SupportButtonProps) {
   const [agreed, setAgreed] = useState(false);
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSupportClick = () => {
+  const handleSupportClick = async () => {
     if (!agreed) {
       setError('You must confirm your age to support this campaign.');
       return;
     }
     setError('');
+    setLoading(true);
 
-    // 1. Core CPX Configuration Parameters
-    const appId = "YOUR_CPX_APP_ID"; // Get this from your CPX Dashboard
-    const extUserId = encodeURIComponent(fundraiserId); // Pass the target fundraiser's ID
-    
-    /**
-     * 2. Build the CPX Web URL
-     * This opens the responsive web view of the survey panel tailored 
-     * to this specific fundraiser's tracking pipeline.
-     */
-    const cpxUrl = `https://cpx-research.com{appId}&ext_user_id=${extUserId}`;
+    try {
+      // Send a secure POST request carrying the JSON body payload your API expects
+      const response = await fetch('/api/survey/start', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          fundraiserSlug: fundraiserSlug,
+          referrer: typeof window !== 'undefined' ? window.location.href : 'Direct',
+        }),
+      });
+      
+      const data = await response.json();
 
-    // 3. Open the survey interface safely in a new tab
-    window.open(cpxUrl, '_blank', 'noopener,noreferrer');
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to generate a secure survey tracking session.');
+      }
+      
+      // Open the survey URL safely in a new tab
+      if (data.surveyUrl) {
+        window.open(data.surveyUrl, '_blank', 'noopener,noreferrer');
+      } else {
+        throw new Error('Server did not return a valid configuration route.');
+      }
+    } catch (err: any) {
+      setError(err.message || 'An unexpected connectivity error occurred.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -49,7 +68,8 @@ export default function SupportButton({ fundraiserId }: SupportButtonProps) {
           type="checkbox"
           checked={agreed}
           onChange={(e) => setAgreed(e.target.checked)}
-          className="w-4 h-4 mt-0.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+          disabled={loading}
+          className="w-4 h-4 mt-0.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 disabled:opacity-50"
         />
         <label htmlFor="compliance-check" className="text-xs text-gray-500 leading-normal">
           I am <strong className="text-gray-700">14 years of age or older</strong> and agree to share 
@@ -61,13 +81,14 @@ export default function SupportButton({ fundraiserId }: SupportButtonProps) {
 
       <button
         onClick={handleSupportClick}
+        disabled={!agreed || loading}
         className={`w-full py-3 px-4 font-medium rounded-lg text-white transition-all duration-200 ${
-          agreed 
+          agreed && !loading
             ? 'bg-blue-600 hover:bg-blue-700 cursor-pointer shadow-sm' 
-            : 'bg-gray-300 cursor-not-allowed'
+            : 'bg-gray-300 cursor-not-allowed opacity-70'
         }`}
       >
-        🚀 Start Survey to Support
+        {loading ? '⏳ Preparing Survey...' : '🚀 Start Survey to Support'}
       </button>
       
       <p className="text-[10px] text-center text-gray-400">
