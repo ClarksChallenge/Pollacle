@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 import { prisma } from "@/app/lib/prisma";
 
-export const runtime = "edge";
+export const runtime = "node js";
 
 export const alt = "Pollacle Fundraiser";
 
