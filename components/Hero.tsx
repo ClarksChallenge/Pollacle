@@ -57,9 +57,6 @@ export default function Hero() {
 
 
 
-        <p className="mt-6 text-sm text-gray-500">
-          Powered by CPX Research survey technology
-        </p>
 
 
       </div>

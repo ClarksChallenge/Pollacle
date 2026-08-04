@@ -72,7 +72,7 @@ export default function SupportButton({ fundraiserSlug }: SupportButtonProps) {
           className="w-4 h-4 mt-0.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 disabled:opacity-50"
         />
         <label htmlFor="compliance-check" className="text-xs text-gray-500 leading-normal">
-          I am <strong className="text-gray-700">14 years of age or older</strong> and agree to share 
+          I am <strong className="text-gray-700">18 years of age or older</strong> and agree to share 
           temporary device & demographic data with third-party research networks to generate this credit.
         </label>
       </div>
@@ -91,9 +91,6 @@ export default function SupportButton({ fundraiserSlug }: SupportButtonProps) {
         {loading ? '⏳ Preparing Survey...' : '🚀 Start Survey to Support'}
       </button>
       
-      <p className="text-[10px] text-center text-gray-400">
-        Powered securely by Pollacle x CPX Research. You can exit the survey at any time.
-      </p>
     </div>
   );
 }

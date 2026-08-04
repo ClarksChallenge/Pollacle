@@ -159,7 +159,7 @@ export default async function FounderAnalyticsPage() {
 
           <div className="bg-white rounded-2xl shadow p-6">
             <h3 className="font-bold text-lg">
-              Average CPX Reward
+              Average Survey Reward
             </h3>
 
             <div className="text-5xl font-bold mt-4">
@@ -195,7 +195,7 @@ export default async function FounderAnalyticsPage() {
                   <div>
 
                     <div className="font-bold">
-                      CPX Research Survey
+                      Partner Survey
                     </div>
 
                     <div className="text-sm text-gray-500">

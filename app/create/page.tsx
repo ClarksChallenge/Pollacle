@@ -58,7 +58,7 @@ export default function CreateFundraiserPage() {
             survey-to-support system with our first official campaign.
 
             This allows us to verify survey tracking,
-            CPX Research connections, rewards, and fundraiser reporting
+            survey partner connections, rewards, and fundraiser reporting
             before opening the platform to more creators.
 
           </p>

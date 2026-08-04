@@ -64,7 +64,7 @@ export default function SurveyContent() {
               className="mt-1 h-4 w-4 accent-purple-600"
             />
             <span>
-              I understand that my demographic and device data may be processed by CPX Research and other research partners for survey qualification, fraud screening, and reward processing.
+              I understand that my demographic and device data may be processed by our research partners for survey qualification, fraud screening, and reward processing.
             </span>
           </label>
 
@@ -75,7 +75,7 @@ export default function SurveyContent() {
               onChange={(event) => setAgeConfirmed(event.target.checked)}
               className="mt-1 h-4 w-4 accent-purple-600"
             />
-            <span>I confirm that I am at least 14 years old and want to continue to the survey.</span>
+            <span>I confirm that I am at least 18 years old and want to continue to the survey.</span>
           </label>
         </div>
 

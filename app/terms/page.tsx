@@ -9,7 +9,7 @@ export default function TermsPage() {
         </p>
 
         <p className="mt-6 text-gray-700 leading-8">
-          Survey participation must be completed honestly and in accordance with the requirements of our research partners. Supporters must be at least 14 years old, and they may close a survey window at any time without penalty.
+          Survey participation must be completed honestly and in accordance with the requirements of our research partners. Supporters must be at least 18 years old, and they may close a survey window at any time without penalty.
         </p>
 
         <p className="mt-6 text-gray-700 leading-8">

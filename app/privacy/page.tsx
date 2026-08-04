@@ -9,7 +9,7 @@ export default function PrivacyPage() {
         </p>
 
         <p className="mt-6 text-gray-700 leading-8">
-          When supporters begin a survey, they may be asked to confirm that they are at least 14 years old and that their demographic and device data may be processed by third-party research networks, including CPX Research (Make Opinion GmbH), for survey qualification, fraud screening, and reward processing. Supporters may also be asked to review our survey partner terms before continuing.
+          When supporters begin a survey, they may be asked to confirm that they are at least 18 years old and that their demographic and device data may be processed by third-party research networks, including CPX Research (Make Opinion GmbH), for survey qualification, fraud screening, and reward processing. Supporters may also be asked to review our survey partner terms before continuing.
         </p>
 
         <p className="mt-6 text-gray-700 leading-8">

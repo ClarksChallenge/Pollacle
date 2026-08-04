@@ -62,3 +62,19 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Founder setup
+
+The platform is intentionally locked down during launch testing. Public fundraiser creation is disabled, and only the configured founder campaign may be used.
+
+To create the founder fundraiser:
+
+1. Set `FOUNDER_EMAIL` in your environment to the founder email address.
+2. Optionally set `FOUNDER_NAME` and `FOUNDER_FUNDRAISER_TITLE`.
+3. Run:
+
+```bash
+npm run seed:founder
+```
+
+This script creates or updates the founder user and the founder fundraiser in the Neon database. Use it when the live site is locked down and you need the protected founder campaign.

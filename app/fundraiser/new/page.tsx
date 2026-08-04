@@ -53,7 +53,7 @@ export default function NewFundraiserPage() {
             survey-to-support experience with our first official
             fundraiser.
 
-            We are verifying CPX Research survey connections,
+            We are verifying survey partner connections,
             conversion tracking, rewards, and reporting before
             opening the platform to additional creators.
 
@@ -92,7 +92,7 @@ export default function NewFundraiserPage() {
             </li>
 
             <li>
-              ✅ CPX Research verified rewards
+              ✅ Partner-verified rewards
             </li>
 
           </ul>

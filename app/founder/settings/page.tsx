@@ -56,7 +56,7 @@ export default async function FounderSettingsPage() {
 
           <div className="bg-white rounded-2xl shadow p-6">
             <h2 className="text-2xl font-bold">
-              CPX Research
+              Survey Partner Integration
             </h2>
 
             <p className="mt-3">

@@ -80,7 +80,11 @@ export async function POST(req: Request) {
       },
     });
 
-    const surveyUrl = buildCpxLaunchUrl(session.id, fundraiser.userId || fundraiser.id);
+    const surveyUrl = buildCpxLaunchUrl(
+      session.id,
+      fundraiser.id,
+      fundraiser.userId || fundraiser.id
+    );
 
     return NextResponse.json({
       success: true,
