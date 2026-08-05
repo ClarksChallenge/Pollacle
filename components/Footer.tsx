@@ -12,7 +12,7 @@ export default function Footer() {
         <div>
 
           <h2 className="text-2xl font-bold text-purple-700">
-            🐙 Pollacle
+            Pollacle
           </h2>
 
 

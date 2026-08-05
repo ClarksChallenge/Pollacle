@@ -77,9 +77,7 @@ export default async function FundraisersPage() {
           <div className="bg-white rounded-2xl shadow p-10 text-center">
 
 
-            <div className="text-6xl">
-              🐙
-            </div>
+            <div className="text-6xl"></div>
 
 
 
@@ -185,9 +183,7 @@ export default async function FundraisersPage() {
                     ) : (
 
 
-                      <div className="text-6xl">
-                        🐙
-                      </div>
+                      <div className="text-6xl"></div>
 
 
                     )}

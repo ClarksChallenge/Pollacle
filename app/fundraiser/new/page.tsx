@@ -8,11 +8,7 @@ export default function NewFundraiserPage() {
         {/* Mascot */}
 
         <div className="flex justify-center mb-6">
-
-          <div className="text-7xl">
-            🐙
-          </div>
-
+          <div className="text-7xl" />
         </div>
 
 
@@ -41,8 +37,7 @@ export default function NewFundraiserPage() {
 
           <h2 className="text-xl font-bold text-purple-700">
 
-            🐙 Single-Founder Launch
-
+            Single-Founder Launch
           </h2>
 
 
@@ -106,7 +101,7 @@ export default function NewFundraiserPage() {
 
         <p className="mt-6 text-purple-700 font-semibold">
 
-          Thank you for helping us test Pollacle 🐙
+          Thank you for helping us test Pollacle
 
         </p>
 
