@@ -37,6 +37,13 @@ export function buildCpxLaunchUrl(
       );
     }
 
+    console.log("CPX DEBUG");
+    console.log({
+      sessionId,
+      fundraiserId,
+      userId,
+      template,
+    });
     return template
       .replace(/\{app_id\}/g, appId)
       .replace(/\{sessionId\}/g, sessionId)
