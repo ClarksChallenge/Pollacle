@@ -56,4 +56,4 @@ next-env.d.ts
 prisma/
 **/*.dbapp/api/cpx/callback/route-backup.ts
 
-prisma/prisma/
+prisma/prisma/pollacle.db
