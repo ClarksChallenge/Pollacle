@@ -8,16 +8,14 @@ function isSuccessStatus(status: string | null) {
   return ["1", "success", "completed", "ok", "approved"].includes(normalized);
 }
 
-export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-
-  const status = searchParams.get("status");
-  const transId = searchParams.get("trans_id");
-  const sessionId = searchParams.get("sid") || searchParams.get("sessionId");
-  const fundraiserId = searchParams.get("subid_1") || searchParams.get("fundraiserId");
-  const userId = searchParams.get("user_id");
-  const amountLocal = searchParams.get("amount_local");
-  const incomingHash = searchParams.get("hash");
+async function handleCpxCallback(params: Record<string, string | null>) {
+  const status = params.status || null;
+  const transId = params.trans_id || params.transId || null;
+  const sessionId = params.sid || params.sessionId || null;
+  const fundraiserId = params.subid_1 || params.fundraiserId || null;
+  const userId = params.user_id || params.userId || null;
+  const amountLocal = params.amount_local || params.amount || null;
+  const incomingHash = params.hash || null;
 
   const secureHashSecret =
     process.env.CPX_CALLBACK_SECRET || process.env.CPX_SECURE_HASH_SECRET;
@@ -109,4 +107,42 @@ export async function GET(request: NextRequest) {
   );
 
   return new NextResponse("1", { status: 200 });
+}
+
+export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+
+  const params: Record<string, string | null> = {};
+  searchParams.forEach((value, key) => (params[key] = value));
+
+  return handleCpxCallback(params);
+}
+
+export async function POST(request: NextRequest) {
+  const contentType = request.headers.get("content-type") || "";
+  const params: Record<string, string | null> = {};
+
+  if (contentType.includes("application/json")) {
+    try {
+      const body = await request.json();
+      for (const [k, v] of Object.entries(body || {})) {
+        params[k] = v == null ? null : String(v);
+      }
+    } catch (e) {
+      return new NextResponse("Invalid JSON body", { status: 400 });
+    }
+  } else {
+    try {
+      const form = await request.formData();
+      for (const [k, v] of form.entries()) {
+        params[k] = typeof v === "string" ? v : String(v);
+      }
+    } catch (e) {
+      // fallback to parsing url search string if form parsing fails
+      const url = new URL(request.url);
+      url.searchParams.forEach((value, key) => (params[key] = value));
+    }
+  }
+
+  return handleCpxCallback(params);
 }
