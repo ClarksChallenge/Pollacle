@@ -14,7 +14,9 @@ export function buildCpxLaunchUrl(
   fundraiserId: string,
   userId: string
 ) {
-  const template = process.env.CPX_SURVEY_URL_TEMPLATE;
+  const template =
+    "https://offers.cpx-research.com/index.php?app_id={app_id}&ext_user_id={ext_user_id}&subid_1={fundraiserId}&subid_2={sessionId}";
+
   const appId = process.env.CPX_APP_ID;
 
   const callbackHost =
@@ -24,56 +26,28 @@ export function buildCpxLaunchUrl(
     ? `${normalizeUrl(callbackHost)}/api/cpx/callback`
     : null;
 
-  if (template) {
-    if (!callbackUrl) {
-      throw new CpxConfigurationError(
-        "Missing NEXT_PUBLIC_SITE_URL or NEXTAUTH_URL for CPX callback URL."
-      );
-    }
-
-    if (!appId) {
-      throw new CpxConfigurationError(
-        "Missing CPX_APP_ID in environment variables."
-      );
-    }
-
-    console.log("CPX DEBUG");
-    console.log({
-      sessionId,
-      fundraiserId,
-      userId,
-      template,
-    });
-    return template
-      .replace(/\{app_id\}/g, appId)
-      .replace(/\{sessionId\}/g, sessionId)
-      .replace(/\{fundraiserId\}/g, fundraiserId)
-      .replace(/\{userId\}/g, userId)
-      .replace(/\{ext_user_id\}/g, userId)
-      .replace(/\{callbackUrl\}/g, encodeURIComponent(callbackUrl))
-      .replace(/\{callback_url\}/g, encodeURIComponent(callbackUrl));
-  }
-
-  if (!appId) {
-    throw new CpxConfigurationError(
-      "Missing CPX_SURVEY_URL_TEMPLATE or CPX_APP_ID in your environment variables."
-    );
-  }
-
   if (!callbackUrl) {
     throw new CpxConfigurationError(
       "Missing NEXT_PUBLIC_SITE_URL or NEXTAUTH_URL for CPX callback URL."
     );
   }
 
-  const url = new URL(
-    "https://offers.cpx-research.com/index.php"
-  );
+  if (!appId) {
+    throw new CpxConfigurationError(
+      "Missing CPX_APP_ID in environment variables."
+    );
+  }
 
-  url.searchParams.set("app_id", appId);
-  url.searchParams.set("ext_user_id", userId);
-  url.searchParams.set("subid_1", fundraiserId);
-  url.searchParams.set("sid", sessionId);
+  console.log("CPX DEBUG", {
+    sessionId,
+    fundraiserId,
+    userId,
+  });
 
-  return url.toString();
+  return template
+    .replace(/\{app_id\}/g, appId)
+    .replace(/\{sessionId\}/g, sessionId)
+    .replace(/\{fundraiserId\}/g, fundraiserId)
+    .replace(/\{userId\}/g, userId)
+    .replace(/\{ext_user_id\}/g, userId);
 }
