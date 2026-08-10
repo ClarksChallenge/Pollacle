@@ -1,6 +1,9 @@
 import { prisma } from "@/app/lib/prisma";
 import { logServerError } from "@/app/lib/server-helpers";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 // GET FEATURED ACTIVE FUNDRAISERS (founder-only during launch)
 export async function GET() {
   try {
