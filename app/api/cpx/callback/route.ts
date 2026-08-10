@@ -17,8 +17,7 @@ async function handleCpxCallback(params: Record<string, string | null>) {
   const amountLocal = params.amount_local || params.amount || null;
   const incomingHash = params.hash || null;
 
-  const secureHashSecret =
-    process.env.CPX_CALLBACK_SECRET || process.env.CPX_SECURE_HASH_SECRET;
+  const secureHashSecret = process.env.CPX_SECURE_HASH_SECRET;
 
   if (!transId || !incomingHash || !secureHashSecret) {
     return new NextResponse("Missing baseline tracking data", { status: 400 });
