@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 
 async function main() {
 
-  const email = "robertmccurdy77@gmail.com";
+  const email = process.env.FOUNDER_EMAIL || "founder@example.com";
 
   const user = await prisma.user.upsert({
     where: {

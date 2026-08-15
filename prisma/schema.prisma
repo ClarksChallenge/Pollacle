@@ -121,3 +121,9 @@ model playing_with_neon {
   name  String
   value Float? @db.Real
 }
+
+model BounceBackCounter {
+  id        Int      @id @default(1)
+  count     Int      @default(0)
+  updatedAt DateTime @updatedAt
+}

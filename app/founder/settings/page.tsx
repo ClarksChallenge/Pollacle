@@ -104,7 +104,7 @@ export default async function FounderSettingsPage() {
             </h2>
 
             <p className="mt-3 text-gray-700">
-              {session.user?.email}
+              Connected (hidden for privacy)
             </p>
           </div>
 
