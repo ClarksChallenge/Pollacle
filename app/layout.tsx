@@ -17,6 +17,9 @@ const geistMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "Pollacle",
   description: "Support fundraisers by completing surveys.",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({
