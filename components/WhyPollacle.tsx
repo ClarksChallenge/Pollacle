@@ -9,8 +9,8 @@ export default function WhyPollacle() {
           </h2>
 
           <p className="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">
-            Pollacle makes fundraising accessible by turning survey participation
-            into support for organizations and causes people care about.
+            Pollacle is a fundraising platform that turns completed surveys into
+            support for organizations, communities, and causes people care about.
           </p>
         </div>
 
@@ -22,7 +22,7 @@ export default function WhyPollacle() {
               No Out-of-Pocket Donations
             </h3>
             <p className="mt-3 text-gray-600">
-              Support campaigns through survey participation instead of spending
+              Support campaigns through survey completion instead of spending
               your own money.
             </p>
           </div>

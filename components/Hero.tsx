@@ -23,10 +23,9 @@ export default function Hero() {
 
         <p className="mt-6 text-lg text-gray-600 leading-8">
 
-          Turn survey participation into meaningful support for creators,
-          nonprofits, schools, sports teams, and community organizations.
-
-          No donation required.
+          Pollacle is a fundraising platform that turns survey completion into
+          meaningful support for creators, nonprofits, schools, sports teams,
+          and community organizations. No donation required.
 
         </p>
 

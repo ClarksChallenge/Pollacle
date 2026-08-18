@@ -68,15 +68,7 @@ export default function Footer() {
 
 
 
-            <Link
-              href="/dashboard"
-              className="block hover:text-purple-700"
-            >
-              Creator Dashboard
-            </Link>
-
-
-          </div>
+           </div>
 
 
         </div>

@@ -11,8 +11,8 @@ export default function HowItWorks() {
 
 
       <p className="text-center text-gray-600 mt-4 max-w-2xl mx-auto">
-        Pollacle turns survey participation into support for fundraisers.
-        Supporters help causes without spending their own money.
+        Pollacle turns completed surveys into support for fundraisers.
+        Supporters can make an impact simply by sharing their opinions—without spending their own money.
       </p>
 
 
