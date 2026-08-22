@@ -1,1 +1,1 @@
-export const BOUNCE_BACK_COUNT = 22;
+export const BOUNCE_BACK_COUNT = 57;
