@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import AuthProvider from "@/components/SessionProvider";
@@ -103,12 +104,18 @@ export default function RootLayout({
             __html: JSON.stringify(structuredData),
           }}
         />
-      </head>
+ 
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3196995704080676"
+          crossOrigin="anonymous"
+       />
 
+     </head>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <AuthProvider>
-          {children}
-          <CookieConsent />
+       <AuthProvider>
+         {children}
+         <CookieConsent />
         </AuthProvider>
       </body>
     </html>
