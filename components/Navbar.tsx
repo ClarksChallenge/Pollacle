@@ -51,6 +51,13 @@ export default function Navbar() {
             About
           </Link>
 
+          <Link
+            href="/blog"
+            className="hover:text-purple-700 transition"
+          >
+            Blog
+          </Link>
+
         </nav>
 
 
