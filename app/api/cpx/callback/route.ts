@@ -11,9 +11,9 @@ function isSuccessStatus(status: string | null) {
 async function handleCpxCallback(params: Record<string, string | null>) {
   const status = params.status || null;
   const transId = params.trans_id || params.transId || null;
-  const sessionId = params.sid || params.sessionId || null;
+  const sessionId =
+    params.subid_2 || params.sid || params.sessionId || null;
   const fundraiserId = params.subid_1 || params.fundraiserId || null;
-  const userId = params.user_id || params.userId || null;
   const amountLocal = params.amount_local || params.amount || null;
   const incomingHash = params.hash || null;
 
@@ -60,14 +60,12 @@ async function handleCpxCallback(params: Record<string, string | null>) {
   await prisma.surveyCompletion.upsert({
     where: { transactionId: transId },
     update: {
-      userId: userId || undefined,
       rewardAmount,
       status: success ? "COMPLETED" : status || "FAILED",
       completedAt: success ? now : null,
     },
     create: {
       fundraiserId: fundraiser.id,
-      userId: userId || undefined,
       provider: "CPX Research",
       transactionId: transId,
       rewardAmount,
