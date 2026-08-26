@@ -28,8 +28,13 @@ export default function ContactPage() {
           </p>
 
 
-          <p className="mt-6 font-semibold text-purple-700">
-            support@pollacle.com
+          <p className="mt-6 font-semibold">
+            <a
+              href="mailto:support@pollacle.com"
+              className="text-purple-700 hover:text-purple-900 underline"
+            >
+              support@pollacle.com
+            </a>
           </p>
 
 
