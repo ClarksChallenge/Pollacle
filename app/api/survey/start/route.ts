@@ -70,7 +70,7 @@ export async function POST(req: Request) {
     const session = await prisma.surveySession.create({
       data: {
         fundraiserId: fundraiser.id,
-        userId: fundraiser.userId || fundraiser.id,
+        userId: null,
         status: "STARTED",
         provider: "CPX Research",
         referrer: referrer || "Direct",
@@ -83,7 +83,7 @@ export async function POST(req: Request) {
     const surveyUrl = buildCpxLaunchUrl(
       session.id,
       fundraiser.id,
-      fundraiser.userId || fundraiser.id
+      session.id
     );
 
     return NextResponse.json({
