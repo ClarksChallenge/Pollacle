@@ -1,54 +1,43 @@
-import Link from "next/link";
+import fs from "fs";
+import path from "path";
+import { marked } from "marked";
+import matter from "gray-matter";
 import { notFound } from "next/navigation";
+import Link from "next/link";
 
-const posts = {
-  "how-pollacle-works": {
-    title: "How Pollacle Works",
-    date: "August 26, 2026",
-    content: (
-      <>
-        <p>
-          Pollacle is built around a simple idea: people can support a
-          fundraiser by sharing their opinions through market research surveys
-          instead of making a cash donation.
-        </p>
+function getPost(slug: string) {
+  const filePath = path.join(
+    process.cwd(),
+    "content/blog",
+    `${slug}.md`
+  );
 
-        <h2>Support without spending money</h2>
+  if (!fs.existsSync(filePath)) {
+    return null;
+  }
 
-        <p>
-          When someone chooses to support a Pollacle fundraiser, they can be
-          connected with a research survey provided by our research partner.
-          Completing an eligible survey can generate a credit for the
-          fundraiser.
-        </p>
+  const fileContent = fs.readFileSync(filePath, "utf8");
+  const { data, content } = matter(fileContent);
 
-        <h2>Where the surveys come from</h2>
-
-        <p>
-          Pollacle uses CPX Research survey technology to connect supporters
-          with available market research opportunities.
-        </p>
-
-        <h2>What Pollacle is trying to accomplish</h2>
-
-        <p>
-          The goal is to create another way for people to help causes,
-          projects, and fundraisers even when they cannot afford to contribute
-          money directly.
-        </p>
-
-        <p>
-          Pollacle is being built to make fundraising more accessible by
-          turning people's time and opinions into another potential source of
-          support.
-        </p>
-      </>
-    ),
-  },
-};
+  return {
+    slug,
+    title: data.title,
+    description: data.description,
+    date: data.date,
+    content: marked.parse(content),
+  };
+}
 
 export async function generateStaticParams() {
-  return Object.keys(posts).map((slug) => ({ slug }));
+  const blogDirectory = path.join(process.cwd(), "content/blog");
+
+  const files = fs
+    .readdirSync(blogDirectory)
+    .filter((file) => file.endsWith(".md"));
+
+  return files.map((file) => ({
+    slug: file.replace(/\.md$/, ""),
+  }));
 }
 
 export async function generateMetadata({
@@ -56,7 +45,7 @@ export async function generateMetadata({
 }: {
   params: { slug: string };
 }) {
-  const post = posts[params.slug as keyof typeof posts];
+  const post = getPost(params.slug);
 
   if (!post) {
     return {};
@@ -64,8 +53,7 @@ export async function generateMetadata({
 
   return {
     title: `${post.title} | Pollacle`,
-    description:
-      "Learn how Pollacle turns completed surveys into support for fundraisers.",
+    description: post.description,
   };
 }
 
@@ -74,7 +62,7 @@ export default function BlogPost({
 }: {
   params: { slug: string };
 }) {
-  const post = posts[params.slug as keyof typeof posts];
+  const post = getPost(params.slug);
 
   if (!post) {
     notFound();
@@ -90,15 +78,18 @@ export default function BlogPost({
           ← Back to Blog
         </Link>
 
-        <p className="mt-8 text-sm text-gray-500">{post.date}</p>
+        <p className="mt-8 text-sm text-gray-500">
+          {post.date}
+        </p>
 
         <h1 className="mt-2 text-4xl font-bold text-gray-900">
           {post.title}
         </h1>
 
-        <div className="prose prose-lg mt-10 max-w-none text-gray-700">
-          {post.content}
-        </div>
+        <div
+          className="prose prose-lg mt-10 max-w-none text-gray-700"
+          dangerouslySetInnerHTML={{ __html: post.content }}
+        />
       </article>
     </main>
   );

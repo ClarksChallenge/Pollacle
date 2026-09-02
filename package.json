@@ -13,17 +13,20 @@
     "ci:tests": "npx playwright install --with-deps && npx playwright test"
   },
   "dependencies": {
-    "chart.js": "^4.4.0",
-    "react-chartjs-2": "^5.2.0",
     "@auth/prisma-adapter": "^2.11.2",
     "@prisma/client": "^6.19.3",
+    "@sentry/nextjs": "^8.6.0",
+    "chart.js": "^4.4.0",
+    "gray-matter": "^4.0.3",
+    "marked": "^18.0.11",
     "next": "14.2.0",
     "next-auth": "^4.24.14",
     "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "@sentry/nextjs": "^8.6.0"
+    "react-chartjs-2": "^5.2.0",
+    "react-dom": "18.2.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.40.0",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
@@ -31,8 +34,7 @@
     "postcss": "^8.5.16",
     "prisma": "6.19.3",
     "tailwindcss": "^3.4.17",
-    "typescript": "^5",
-    "@playwright/test": "^1.40.0"
+    "typescript": "^5"
   },
   "allowScripts": {
     "@prisma/client@6.19.3": true,
