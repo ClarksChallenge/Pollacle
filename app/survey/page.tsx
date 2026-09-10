@@ -1,18 +1,5 @@
-import { Suspense } from "react";
-import SurveyContent from "./components/SurveyContent";
+import { redirect } from "next/navigation";
 
 export default function SurveyPage() {
-  return (
-    <Suspense
-      fallback={
-        <main className="min-h-screen bg-gray-100 flex items-center justify-center">
-          <div className="text-purple-700 text-xl font-bold">
-            Loading survey...
-          </div>
-        </main>
-      }
-    >
-      <SurveyContent />
-    </Suspense>
-  );
+  redirect("/fundraisers");
 }

@@ -67,7 +67,7 @@ export default function FeaturedFundraisers() {
 
 
       <p className="text-center text-gray-600 mt-4">
-        Support causes that matter by completing surveys.
+        Discover campaigns and find new ways to support the causes that matter.
       </p>
 
 

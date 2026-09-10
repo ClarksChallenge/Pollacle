@@ -11,12 +11,6 @@ export default async function FounderSettingsPage() {
     redirect("/login");
   }
 
-  const productionUrl =
-    process.env.NEXTAUTH_URL || "Not configured";
-
-  const cpxConfigured =
-    !!process.env.CPX_CALLBACK_SECRET;
-
   const databaseConfigured =
     !!process.env.DATABASE_URL;
 
@@ -56,30 +50,22 @@ export default async function FounderSettingsPage() {
 
           <div className="bg-white rounded-2xl shadow p-6">
             <h2 className="text-2xl font-bold">
-              Survey Partner Integration
+              Support Model
             </h2>
 
-            <p className="mt-3">
-              Callback Secret:
+            <p className="mt-3 text-gray-600">
+              Pollacle is transitioning away from the original survey-based
+              support model and building a new partner-based approach.
             </p>
 
-            <span
-              className={`inline-block mt-3 rounded-full px-4 py-2 font-semibold ${
-                cpxConfigured
-                  ? "bg-green-100 text-green-700"
-                  : "bg-red-100 text-red-700"
-              }`}
-            >
-              {cpxConfigured ? "Configured" : "Missing"}
+            <span className="inline-block mt-4 rounded-full bg-yellow-100 text-yellow-700 px-4 py-2 font-semibold">
+              IN DEVELOPMENT
             </span>
 
-            <p className="mt-5 font-semibold">
-              Callback Endpoint
+            <p className="mt-4 text-sm text-gray-500">
+              Partner integration and new support opportunities will be added
+              as the next version of Pollacle is developed.
             </p>
-
-            <code className="block mt-2 bg-gray-100 rounded p-3 break-all text-sm">
-              {productionUrl}/api/cpx/callback
-            </code>
           </div>
 
           <div className="bg-white rounded-2xl shadow p-6">

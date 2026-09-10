@@ -2,7 +2,6 @@
 const required = [
   "NEXT_PUBLIC_SITE_URL",
   "DATABASE_URL",
-  "CPX_CALLBACK_SECRET",
   "NEXTAUTH_URL",
 ];
 

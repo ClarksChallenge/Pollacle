@@ -50,8 +50,8 @@ export default async function FundraisersPage() {
 
           <p className="mt-4 text-lg text-purple-100 max-w-3xl">
 
-            Discover causes you can support by completing surveys.
-            Every completed survey helps create real impact.
+            Discover campaigns and find meaningful ways to support the
+            creators, organizations, schools, teams, and communities behind them.
 
           </p>
 
@@ -89,8 +89,9 @@ export default async function FundraisersPage() {
 
             <p className="text-gray-500 mt-3 max-w-xl mx-auto">
 
-              Our first fundraiser is being tested.
-              Check back soon to support campaigns through survey participation.
+              Our fundraising platform is evolving as we build more
+              reliable ways for people and partners to support campaigns.
+              Check back soon to see what&apos;s next.
 
             </p>
 
@@ -292,13 +293,6 @@ export default async function FundraisersPage() {
 
                     <div className="mt-6 flex justify-between items-center">
 
-
-
-                      <span className="text-sm text-gray-500">
-
-                        {fundraiser.surveySupporters} supporters
-
-                      </span>
 
 
 

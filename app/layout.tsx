@@ -21,12 +21,12 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
 
   title: {
-    default: "Pollacle — Turn Completed Surveys Into Support",
+    default: "Pollacle — Support Causes. Make an Impact.",
     template: "%s | Pollacle",
   },
 
   description:
-  "Pollacle is a fundraising platform that turns survey completion into support for organizations, communities, and causes people care about.",
+  "Pollacle is building more reliable ways for people to support creators, nonprofits, schools, sports teams, and community organizations.",
 
   applicationName: "Pollacle",
 
@@ -51,16 +51,16 @@ export const metadata: Metadata = {
     type: "website",
     url: siteUrl,
     siteName: "Pollacle",
-    title: "Pollacle — Turn Completed Surveys Into Support",
+    title: "Pollacle — Support Causes. Make an Impact.",
     description:
-      "Pollacle is a fundraising platform that turns survey completion into support for organizations, communities, and causes people care about.",
+      "Pollacle is building more reliable ways for people to support creators, nonprofits, schools, sports teams, and community organizations.",
   },
 
   twitter: {
     card: "summary_large_image",
-    title: "Pollacle — Turn Completed Surveys Into Support",
+    title: "Pollacle — Support Causes. Make an Impact.",
     description:
-      "Support fundraisers by completing surveys and help turn your completed surveys into real support for causes that matter.",
+      "Discover campaigns and find meaningful ways to support the causes that matter.",
   },
 };
 
@@ -74,7 +74,7 @@ const structuredData = {
       url: siteUrl,
       logo: `${siteUrl}/favicon.svg`,
       description:
-        "Pollacle is a fundraising platform that turns survey completion into support for organizations, communities, and causes people care about.",
+        "Pollacle is building more reliable ways for people to support creators, nonprofits, schools, sports teams, and community organizations.",
     },
     {
       "@type": "WebSite",
@@ -82,7 +82,7 @@ const structuredData = {
       name: "Pollacle",
       url: siteUrl,
       description:
-        "Pollacle helps people support fundraisers by completing qualifying surveys.",
+        "Pollacle is building reliable ways for people to support fundraisers and communities through meaningful participation and action.",
       publisher: {
         "@id": `${siteUrl}/#organization`,
       },

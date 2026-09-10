@@ -3,12 +3,10 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { BOUNCE_BACK_COUNT } from "@/app/lib/bounceBack";
-
 import { prisma } from "@/app/lib/prisma";
 import { notFound } from "next/navigation";
 
 import ShareButton from "@/components/ShareButton";
-import SupportButton from "@/components/SupportButton";
 
 // Public fundraiser launch page
 export const dynamic = "force-dynamic";
@@ -31,7 +29,7 @@ export async function generateMetadata({
     return {
       title: "Pollacle Fundraiser",
       description:
-        "Support fundraisers by completing surveys instead of donating.",
+        "Discover campaigns and find meaningful ways to support the causes that matter.",
     };
   }
 
@@ -201,17 +199,29 @@ export default async function FundraiserPage({
               />
 
               <h2 className="text-3xl font-bold text-purple-700 mt-4">
-                Support this fundraiser without donating
+                Ways to Support
               </h2>
 
-              <p className="mt-3 text-gray-600">
-                Complete surveys from trusted research partners.
-                Your survey participation creates real support.
+              <p className="mt-3 text-gray-600 max-w-2xl mx-auto">
+                Pollacle is developing more reliable ways for people to support
+                campaigns without putting pressure on supporters to make a
+                traditional donation.
               </p>
 
-              <div className="mt-8 flex flex-col md:flex-row gap-4 justify-center">
-                <SupportButton fundraiserSlug={fundraiser.slug} />
+              <div className="mt-6 bg-white rounded-xl p-5 border border-purple-100">
+                <h3 className="text-xl font-bold text-purple-700">
+                  New support opportunities are coming
+                </h3>
 
+                <p className="mt-2 text-gray-600">
+                  We are working with partners and communities to create
+                  meaningful opportunities to support campaigns through
+                  participation, sponsorships, and other forms of community
+                  action.
+                </p>
+              </div>
+
+              <div className="mt-8 flex justify-center">
                 <ShareButton
                   url={`/f/${fundraiser.slug}`}
                   title={fundraiser.title}
@@ -221,7 +231,7 @@ export default async function FundraiserPage({
             </div>
           </div>
 
-          <div className="grid md:grid-cols-4 gap-5 px-8 pb-8">
+          <div className="grid md:grid-cols-3 gap-5 px-8 pb-8">
 
             <div className="bg-gray-50 rounded-xl p-5 text-center">
               <div className="text-3xl font-bold text-purple-700">
@@ -230,16 +240,6 @@ export default async function FundraiserPage({
 
               <p className="text-gray-500">
                 Views
-              </p>
-            </div>
-
-            <div className="bg-gray-50 rounded-xl p-5 text-center">
-              <div className="text-3xl font-bold text-purple-700">
-                {fundraiser.surveySupporters}
-              </div>
-
-              <p className="text-gray-500">
-                Supporters
               </p>
             </div>
 
@@ -253,19 +253,9 @@ export default async function FundraiserPage({
               </p>
             </div>
 
-            <div className="bg-gray-50 rounded-xl p-5 text-center">
-              <div className="text-3xl font-bold text-purple-700">
-                {fundraiser.surveyCompletions.length}
-              </div>
-
-              <p className="text-gray-500">
-                Recent Surveys
-              </p>
-            </div>
-
           </div>
 
-          {/* MANUAL BOUNCE-BACK COUNTER */}
+          {/* TEMPORARY HISTORICAL COUNTER */}
           <div className="px-8 pb-8">
             <div className="bg-purple-50 border border-purple-100 rounded-2xl p-8 text-center">
 
@@ -274,11 +264,13 @@ export default async function FundraiserPage({
               </div>
 
               <h2 className="text-2xl font-bold text-purple-700 mt-3">
-                💜 Bounce-Backs
+                💜 Community Support
               </h2>
 
               <p className="text-gray-600 mt-2">
-                Screen-outs still count toward our 1 Billion Challenge!
+                This counter represents activity from Pollacle&apos;s original
+                support model. We are building the next version of Pollacle
+                around more reliable ways to create impact.
               </p>
 
             </div>
@@ -308,7 +300,7 @@ export default async function FundraiserPage({
                   >
 
                     <span>
-                      Survey completed
+                      Community support recorded
                     </span>
 
                     <strong className="text-green-600">
@@ -328,11 +320,12 @@ export default async function FundraiserPage({
           <div className="border-t p-8 text-center text-gray-500">
 
             <p>
-              Pollacle helps communities raise support through survey participation.
+              Pollacle is evolving toward reliable, transparent ways for
+              communities to support creators, organizations, and causes.
             </p>
 
             <p className="mt-2">
-              Survey rewards, not donations, fund campaigns.
+              We&apos;re building what comes next.
             </p>
 
           </div>

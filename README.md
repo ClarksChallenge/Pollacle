@@ -1,18 +1,18 @@
-# Pollacle — Single-Founder Launch
+# Pollacle — Community Support Platform
 
-This repository contains Pollacle, a survey-to-support fundraising platform currently locked to a single founder for launch testing.
+This repository contains Pollacle, a fundraising and community-support platform evolving toward more reliable ways for people, partners, and organizations to support campaigns.
 
-Important: before public launch consult legal counsel and replace the placeholder Privacy Policy and Terms of Service with reviewed documents.
+Important: before public launch, consult legal counsel and have the Privacy Policy and Terms of Service reviewed for the final product and business model.
 
 Quick start
 
-1. Copy `.env.example` to `.env` and fill values (required): `DATABASE_URL`, `NEXT_PUBLIC_SITE_URL`, `NEXTAUTH_URL`, `CPX_CALLBACK_SECRET`, `FOUNDER_EMAIL`.
+1. Copy `.env.example` to `.env` and fill the required values: `DATABASE_URL`, `NEXT_PUBLIC_SITE_URL`, and `NEXTAUTH_URL`. Founder-only launch settings may also require `FOUNDER_EMAIL`.
 2. Install dependencies: `npm ci`.
 3. Run locally: `npm run dev`.
 
 Production and secrets
 
-- For production use a secrets manager (AWS Secrets Manager, HashiCorp Vault, or GitHub Secrets) to store `DATABASE_URL`, `CPX_CALLBACK_SECRET`, OAuth credentials, and `FOUNDER_EMAIL`.
+- For production, use a secrets manager (AWS Secrets Manager, HashiCorp Vault, GitHub Secrets, or your deployment platform's encrypted environment variables) for `DATABASE_URL`, OAuth credentials, and other sensitive configuration such as `FOUNDER_EMAIL`.
 - Example: CI/CD should inject secrets into the environment when building or deploying the container.
 
 Monitoring and error reporting
@@ -25,7 +25,7 @@ CI/CD
 
 Legal
 
-- The `app/privacy` and `app/terms` pages are placeholders. Do not launch publicly without legal review.
+- The `app/privacy` and `app/terms` pages provide the current website policies. Have them reviewed by qualified legal counsel before public launch.
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started

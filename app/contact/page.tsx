@@ -10,8 +10,8 @@ export default function ContactPage() {
 
 
         <p className="mt-8 text-lg text-gray-700 leading-8">
-          Have questions about Pollacle, fundraising campaigns, or survey
-          participation? We would love to hear from you.
+          Have questions about Pollacle, fundraising campaigns, partnerships, or
+          community support? We would love to hear from you.
         </p>
 
 

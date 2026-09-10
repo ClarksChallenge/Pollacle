@@ -11,7 +11,6 @@ Required environment variables (Vercel runtime + GitHub Secrets)
 - NEXTAUTH_URL — https://pollacle.com
 - SITE_URL — https://pollacle.com
 - FOUNDER_EMAIL — your founder email (seeding + guards)
-- CPX_CALLBACK_SECRET — strong secret for CPX callbacks
 - SENTRY_DSN (optional) — Sentry DSN for error reporting
 - SENTRY_AUTH_TOKEN, SENTRY_ORG, SENTRY_PROJECT (optional) — for Sentry issues listing
 - VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID — for CI deploys
@@ -48,7 +47,7 @@ npx vercel --prod
 Verify after deploy
 - curl https://pollacle.com/api/health  -> should show db: true
 - Sign in as `FOUNDER_EMAIL`, visit /founder/dashboard
-- Start a survey and simulate CPX callback to confirm credits
+- Verify `/api/health` and the public campaign pages after deployment
 
 Cloudflare notes
 - Add `pollacle.com` to Vercel domains and verify with TXT record on Cloudflare.
@@ -57,7 +56,6 @@ Cloudflare notes
 
 Security reminders
 - Do not enable `ALLOW_DEV_IMPERSONATION` in production.
-- Keep `CPX_CALLBACK_SECRET` secure and rotate if compromised.
 # Deploy Checklist
 
 This document describes recommended steps to deploy Pollacle to production.

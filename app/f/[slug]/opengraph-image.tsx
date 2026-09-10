@@ -207,7 +207,7 @@ export default async function Image({
 
         >
 
-          Complete surveys. Create impact. No donation required.
+          Support causes. Create impact. Get involved.
 
         </div>
 
