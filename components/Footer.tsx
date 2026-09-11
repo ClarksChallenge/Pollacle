@@ -66,6 +66,20 @@ export default function Footer() {
               About Pollacle
             </Link>
 
+            <Link
+              href="/blog"
+              className="block hover:text-purple-700"
+            >
+              Blog
+            </Link>
+
+            <Link
+              href="/newsletter"
+              className="block hover:text-purple-700"
+            >
+              Newsletter
+            </Link>
+
 
 
            </div>
