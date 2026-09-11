@@ -1,7 +1,7 @@
 ---
 title: "How Pollacle Works"
 description: "Learn how Pollacle is evolving toward always-on ways to support fundraisers through community participation and partner-powered opportunities."
-date: "2026-09-02"
+date: "2026-08-15"
 ---
 
 Pollacle is built around a simple idea: **supporting a cause shouldn't always require making a cash donation.**
