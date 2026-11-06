@@ -1,3 +1,11 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "About",
+  description:
+    "Pollacle is a pre-launch fundraising platform for creators, schools, nonprofits, and sports teams. Learn what we are building and why.",
+};
+
 export default function AboutPage() {
   return (
     <main className="min-h-screen bg-gray-100">

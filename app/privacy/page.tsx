@@ -1,3 +1,11 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Privacy Policy",
+  description:
+    "How Pollacle collects, uses, and protects information.",
+};
+
 export default function PrivacyPage() {
   return (
     <main className="min-h-screen bg-gray-100">
@@ -50,13 +58,6 @@ export default function PrivacyPage() {
           such as remembering user preferences and recording cookie consent.
           Your browser may also interact with technologies provided by
           third-party services used on the site.
-        </p>
-
-        <p className="mt-4 text-gray-700 leading-8">
-          Pollacle may use third-party advertising services, including Google
-          AdSense. Third-party providers may use cookies or similar
-          technologies in accordance with their own policies and applicable
-          requirements.
         </p>
 
         <h2 className="mt-10 text-2xl font-bold text-gray-900">

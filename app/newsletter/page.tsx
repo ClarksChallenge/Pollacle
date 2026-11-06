@@ -1,3 +1,11 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Newsletter",
+  description:
+    "Stay up to date with Pollacle launch news.",
+};
+
 export default function NewsletterPage() {
   return (
     <main className="min-h-screen bg-gray-100">

@@ -124,7 +124,11 @@ export default async function FounderDashboard() {
             <h1 className="text-3xl font-bold text-purple-700">Founder Dashboard</h1>
             <p className="text-sm text-gray-600 mt-1">Overview of site-wide metrics</p>
           </div>
-          <Link href="/dashboard" className="text-sm text-blue-600">Creator view</Link>
+          <div className="flex items-center gap-4">
+            <Link href="/founder/sponsor-opportunity" className="text-sm font-semibold text-purple-700">Sponsor report</Link>
+            <Link href="/founder/boardroom" className="text-sm font-semibold text-purple-700">Open Boardroom</Link>
+            <Link href="/dashboard" className="text-sm text-blue-600">Creator view</Link>
+          </div>
         </div>
 
         <div className="grid grid-cols-4 gap-6 mb-8">

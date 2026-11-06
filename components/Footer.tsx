@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="border-t mt-20 bg-white">
+    <footer className="border-t bg-white">
 
       <div className="max-w-7xl mx-auto px-8 py-12 grid md:grid-cols-3 gap-10">
 
@@ -17,7 +17,7 @@ export default function Footer() {
 
 
           <p className="mt-4 text-gray-600 leading-7">
-            Turning participation into meaningful support
+            Turning survey completion into meaningful support
             for communities, creators, schools, and organizations.
           </p>
 
@@ -42,15 +42,6 @@ export default function Footer() {
 
 
             <Link
-              href="/"
-              className="block hover:text-purple-700"
-            >
-              Home
-            </Link>
-
-
-
-            <Link
               href="/fundraisers"
               className="block hover:text-purple-700"
             >
@@ -64,20 +55,6 @@ export default function Footer() {
               className="block hover:text-purple-700"
             >
               About Pollacle
-            </Link>
-
-            <Link
-              href="/blog"
-              className="block hover:text-purple-700"
-            >
-              Blog
-            </Link>
-
-            <Link
-              href="/newsletter"
-              className="block hover:text-purple-700"
-            >
-              Newsletter
             </Link>
 
 

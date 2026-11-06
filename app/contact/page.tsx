@@ -1,3 +1,11 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Contact",
+  description:
+    "Questions about Pollacle, partnerships, or starting a campaign? Email the Pollacle team.",
+};
+
 export default function ContactPage() {
   return (
     <main className="min-h-screen bg-gray-100">

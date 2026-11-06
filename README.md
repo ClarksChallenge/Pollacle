@@ -78,3 +78,13 @@ npm run seed:founder
 ```
 
 This script creates or updates the founder user and the founder fundraiser in the Neon database. Use it when the live site is locked down and you need the protected founder campaign.
+
+## Pollacle Revenue Lab
+
+The private founder dashboard includes an AI workspace at `/founder/boardroom` to help develop Pollacle's corporate-card/card-linked rewards revenue opportunity. Sarah Vance works through customer, revenue, and validation strategy; David Chen pressure-tests feasibility and can propose an MVP data model for the current Next.js, Vercel, and PostgreSQL stack. Their answers receive live, aggregate fundraiser and survey metrics and can search and read public web pages for research.
+
+Pollacle's Fidel card-link integration is currently a sandbox test, not a production revenue integration. Corporate employee-spend rewards and consumer/supporter card-linked offers are distinct business models; the Revenue Lab helps compare and validate them but does not create offers, process card transactions, or establish partner terms.
+
+The private `/founder/sponsor-opportunity` report helps demonstrate sponsor value without relying on Pollacle already having a large linked-card user base. Upload a sponsor's anonymized CSV export with `date`, `merchant`, and `amount` columns. The report parses the file in the browser only, calculates historical spend, and models customer rewards, estimated unredeemed rewards, and possible incremental sales using editable assumptions. These are explicitly estimates—not measured rewards lost, proven breakage, or causal sales lift. Never include card numbers or personal information in sponsor files.
+
+Set `GROQ_API_KEY` in the server environment to enable the Revenue Lab. `GROQ_MODEL` is optional and defaults to `llama-3.3-70b-versatile`. Never expose either setting with a `NEXT_PUBLIC_` prefix. Chat history is stored in the founder's browser only; prompts and live aggregate metrics are processed by Groq, and research uses public search/source websites. Do not submit sensitive personal, payment, or supporter information.

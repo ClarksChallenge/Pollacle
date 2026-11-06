@@ -11,14 +11,12 @@ export default function Hero() {
         </h1>
 
         <h2 className="mt-4 text-2xl text-gray-700">
-          Poll. Support. Make an Impact.
+          Support causes. Make an impact.
         </h2>
 
         <p className="mt-6 text-lg text-gray-600 leading-8">
-          Pollacle is evolving the way people support creators, nonprofits,
-          schools, sports teams, and community organizations. We&apos;re
-          building more reliable ways for people to turn their time,
-          participation, and everyday actions into meaningful support.
+          Pollacle is launching soon: a way to support creators, schools,
+          nonprofits, and sports teams without always opening your wallet.
         </p>
 
         <div className="mt-8 flex gap-4 flex-wrap">

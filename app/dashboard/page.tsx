@@ -23,6 +23,28 @@ export default function DashboardPage() {
           as the experience is ready for public launch.
         </p>
 
+        <div className="mb-8 rounded-2xl border border-purple-200 bg-purple-50 p-5 text-left">
+          <div className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-purple-700">Creator tools</div>
+          <h2 className="text-2xl font-bold text-purple-800">Quick Connect streaming</h2>
+          <p className="mt-2 text-sm leading-6 text-gray-700">
+            Connect a live stream service, launch a fundraising broadcast, and keep visitors on a secure Pollacle experience.
+          </p>
+          <div className="mt-4 flex flex-wrap gap-3">
+            <Link
+              href="/creator/connect"
+              className="bg-purple-700 hover:bg-purple-800 text-white font-bold px-5 py-2.5 rounded-xl"
+            >
+              Connect stream
+            </Link>
+            <Link
+              href="/card-linking"
+              className="border border-purple-700 text-purple-700 hover:bg-purple-50 font-bold px-5 py-2.5 rounded-xl"
+            >
+              Card linking setup
+            </Link>
+          </div>
+        </div>
+
         <div className="flex flex-col sm:flex-row justify-center gap-4">
           <Link
             href="/"

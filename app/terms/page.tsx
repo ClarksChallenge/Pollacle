@@ -1,3 +1,11 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Terms of Service",
+  description:
+    "The terms for using Pollacle.",
+};
+
 export default function TermsPage() {
   return (
     <main className="min-h-screen bg-gray-100">

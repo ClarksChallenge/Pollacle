@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Script from "next/script";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import AuthProvider from "@/components/SessionProvider";
@@ -21,17 +20,17 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
 
   title: {
-    default: "Pollacle — Support Causes. Make an Impact.",
+    default: "Pollacle — Turn Completed Surveys Into Support",
     template: "%s | Pollacle",
   },
 
   description:
-  "Pollacle is building more reliable ways for people to support creators, nonprofits, schools, sports teams, and community organizations.",
+  "Pollacle is a fundraising platform that turns survey completion into support for organizations, communities, and causes people care about.",
 
   applicationName: "Pollacle",
 
   alternates: {
-    canonical: siteUrl,
+    canonical: "./",
   },
 
   icons: {
@@ -49,18 +48,19 @@ export const metadata: Metadata = {
 
   openGraph: {
     type: "website",
-    url: siteUrl,
     siteName: "Pollacle",
-    title: "Pollacle — Support Causes. Make an Impact.",
+    images: [{ url: "/pollacle.png", alt: "Pollacle purple octopus mascot" }],
+    title: "Pollacle — Turn Completed Surveys Into Support",
     description:
-      "Pollacle is building more reliable ways for people to support creators, nonprofits, schools, sports teams, and community organizations.",
+      "Pollacle is a fundraising platform that turns survey completion into support for organizations, communities, and causes people care about.",
   },
 
   twitter: {
     card: "summary_large_image",
-    title: "Pollacle — Support Causes. Make an Impact.",
+    images: ["/pollacle.png"],
+    title: "Pollacle — Turn Completed Surveys Into Support",
     description:
-      "Discover campaigns and find meaningful ways to support the causes that matter.",
+      "Support fundraisers by completing surveys and help turn your completed surveys into real support for causes that matter.",
   },
 };
 
@@ -74,7 +74,7 @@ const structuredData = {
       url: siteUrl,
       logo: `${siteUrl}/favicon.svg`,
       description:
-        "Pollacle is building more reliable ways for people to support creators, nonprofits, schools, sports teams, and community organizations.",
+        "Pollacle is a fundraising platform that turns survey completion into support for organizations, communities, and causes people care about.",
     },
     {
       "@type": "WebSite",
@@ -82,7 +82,7 @@ const structuredData = {
       name: "Pollacle",
       url: siteUrl,
       description:
-        "Pollacle is building reliable ways for people to support fundraisers and communities through meaningful participation and action.",
+        "Pollacle helps people support fundraisers by completing qualifying surveys.",
       publisher: {
         "@id": `${siteUrl}/#organization`,
       },
@@ -105,11 +105,6 @@ export default function RootLayout({
           }}
         />
  
-        <Script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3196995704080676"
-          crossOrigin="anonymous"
-       />
 
      </head>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>

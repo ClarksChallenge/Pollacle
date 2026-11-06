@@ -1,6 +1,15 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { prisma } from "@/app/lib/prisma";
+
+export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Browse Fundraisers",
+  description:
+    "Browse active Pollacle campaigns from creators, schools, nonprofits, and teams.",
+};
 
 export default async function FundraisersPage() {
   const founderEmail = process.env.FOUNDER_EMAIL;
@@ -13,6 +22,7 @@ export default async function FundraisersPage() {
         where: {
           status: "ACTIVE",
           userId: founder.id,
+          slug: { not: "help-launch-pollacle" },
         },
         orderBy: {
           createdAt: "desc",
@@ -50,8 +60,8 @@ export default async function FundraisersPage() {
 
           <p className="mt-4 text-lg text-purple-100 max-w-3xl">
 
-            Discover campaigns and find meaningful ways to support the
-            creators, organizations, schools, teams, and communities behind them.
+            Discover causes you can support by completing surveys.
+            Every completed survey helps create real impact.
 
           </p>
 
@@ -89,9 +99,8 @@ export default async function FundraisersPage() {
 
             <p className="text-gray-500 mt-3 max-w-xl mx-auto">
 
-              Our fundraising platform is evolving as we build more
-              reliable ways for people and partners to support campaigns.
-              Check back soon to see what&apos;s next.
+              Our first fundraiser is being tested.
+              Check back soon to support campaigns through survey participation.
 
             </p>
 
@@ -293,6 +302,13 @@ export default async function FundraisersPage() {
 
                     <div className="mt-6 flex justify-between items-center">
 
+
+
+                      <span className="text-sm text-gray-500">
+
+                        {fundraiser.surveySupporters} supporters
+
+                      </span>
 
 
 

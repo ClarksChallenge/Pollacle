@@ -18,7 +18,11 @@ export async function GET() {
     if (!founder) return Response.json([], { status: 200 });
 
     const fundraisers = await prisma.fundraiser.findMany({
-      where: { status: "ACTIVE", userId: founder.id },
+      where: {
+        status: "ACTIVE",
+        userId: founder.id,
+        slug: { not: "help-launch-pollacle" },
+      },
       orderBy: { createdAt: "asc" },
       take: 6,
     });
