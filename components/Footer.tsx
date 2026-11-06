@@ -17,8 +17,7 @@ export default function Footer() {
 
 
           <p className="mt-4 text-gray-600 leading-7">
-            Turning survey completion into meaningful support
-            for communities, creators, schools, and organizations.
+            Support for creators, schools, nonprofits, and teams.
           </p>
 
 
