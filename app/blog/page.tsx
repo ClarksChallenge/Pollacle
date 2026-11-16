@@ -3,6 +3,7 @@ import Link from "next/link";
 import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
+import { notFound } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Blog",
@@ -36,6 +37,8 @@ function getPosts() {
 }
 
 export default function BlogPage() {
+  if (process.env.BLOG_ENABLED !== "true") notFound();
+
   const posts = getPosts();
 
   return (

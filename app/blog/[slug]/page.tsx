@@ -29,6 +29,8 @@ function getPost(slug: string) {
 }
 
 export async function generateStaticParams() {
+  if (process.env.BLOG_ENABLED !== "true") return [];
+
   const blogDirectory = path.join(process.cwd(), "content/blog");
 
   const files = fs
@@ -62,6 +64,8 @@ export default function BlogPost({
 }: {
   params: { slug: string };
 }) {
+  if (process.env.BLOG_ENABLED !== "true") notFound();
+
   const post = getPost(params.slug);
 
   if (!post) {
