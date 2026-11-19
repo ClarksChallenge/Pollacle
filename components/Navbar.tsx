@@ -4,7 +4,6 @@ const links = [
   { href: "/fundraisers", label: "Browse Fundraisers" },
   { href: "/#how", label: "How It Works" },
   { href: "/about", label: "About" },
-  { href: "/blog", label: "Blog" },
 ];
 
 export default function Navbar() {
